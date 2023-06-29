@@ -1,0 +1,214 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head></h:head>
+<body>
+
+	<ui:composition template="/template/Template.xhtml">
+
+		<ui:define name="content">
+			<h3 class="tituloPagina">Entrada de Caixa</h3>
+
+			<h:form id="frmEntrada">
+
+				<ui:include src="/template/MenuEntrada.xhtml" />
+
+
+				<center>
+
+					<p:dataTable widgetVar="tblConsulta" tableStyle="width:auto"
+						rowIndexVar="i" resizableColumns="true" styleClass="tabela"
+						paginator="true" rowsPerPageTemplate="5,10,15" reflow="true"
+						selectionMode="single" selection="#{entradaMB.consulta}"
+						value="#{entradaMB.consultas}" id="tabela" var="c" rows="5"
+						paginatorPosition="top" rowKey="#{c.id}"
+						emptyMessage="Nenhum registro.">
+
+						<p:column headerText="Foto">
+
+							<p:graphicImage rendered="#{c.paciente.nomeImagem eq null}"
+								width="100px;" height="100px;" value="/img/new-user.png" />
+							<p:graphicImage rendered="#{c.paciente.nomeImagem ne null}"
+								width="100px;" height="100px;"
+								value="/imagens/#{c.paciente.nomeImagem}" />
+
+
+						</p:column>
+
+
+						<p:column filterBy="#{c.paciente.nome}"
+							sortBy="#{c.paciente.nome}" headerText="Paciente">
+							<p:outputLabel value="#{c.paciente.nome}" />
+						</p:column>
+
+						<p:column filterBy="#{c.tipoConsulta.descricao}"
+							sortBy="#{c.tipoConsulta.descricao}" headerText="Consulta">
+							<p:outputLabel value="#{c.tipoConsulta.descricao}" />
+							<p:outputLabel rendered="#{c.tipoConsulta.descricao eq null}"
+								value="Não informado." />
+
+						</p:column>
+						<p:column filterBy="#{c.entrada.dataLancamento}"
+							sortBy="#{c.entrada.dataLancamento}"
+							headerText="Data do Lançamento">
+							<p:outputLabel value="#{c.entrada.dataLancamento}">
+								<f:convertDateTime locale="pt_BR" timeZone="America/Sao_Paulo"
+									pattern="dd/MM/yyyy HH:mm:ss" />
+							</p:outputLabel>
+						</p:column>
+						<p:outputLabel rendered="#{c.entrada.dataVencimento eq null}"
+							value="Não informado." />
+
+
+						<p:column filterBy="#{c.entrada.opcaoPagamento}"
+							sortBy="#{c.entrada.opcaoPagamento}"
+							headerText="Opção de Pagamento">
+							<p:outputLabel value="#{c.entrada.opcaoPagamento}" />
+						</p:column>
+
+						<p:column filterBy="#{c.entrada.valor}"
+							sortBy="#{c.entrada.valor}" headerText="Total">
+							<p:outputLabel value="#{c.entrada.valor}">
+								<f:convertNumber pattern="R$#,##0.00" />
+							</p:outputLabel>
+						</p:column>
+
+						<p:column filterBy="#{c.entrada.desconto}"
+							sortBy="#{c.entrada.desconto}" headerText="Desconto">
+							<p:outputLabel value="#{c.entrada.desconto} %" />
+						</p:column>
+
+						<p:column headerText="Ações">
+							<p:commandButton
+								action="#{entradaMB.selecionarEntrada(c.entrada)}"
+								update=":frmExbParcela" oncomplete="PF('dlgExbParcela').show()"
+								value="Ver Detalhes">
+
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+
+
+				</center>
+
+
+			</h:form>
+
+
+			<!-- tabela das parcelas -->
+			<p:dialog resizable="false" responsive="true" appendTo="@(body)"
+				widgetVar="dlgExbParcela" modal="true" dynamic="true"
+				header="Detalhamento de parcelas.">
+
+				<h2>Parcelas referente a consulta selecionada.</h2>
+
+				<h:form id="frmExbParcela">
+
+					<p:dataTable id="tabelaParcela"
+						value="#{entradaMB.entrada.parcelas}" var="p">
+
+						<p:column headerText="Valor / Parcela">
+
+							<p:outputLabel value="#{p.valor}">
+								<f:convertNumber pattern="R$#,##0.00" />
+							</p:outputLabel>
+
+						</p:column>
+
+						<p:column headerText="Data Vencimento">
+							<p:outputLabel value="#{p.dataVencimento}">
+								<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+							</p:outputLabel>
+						</p:column>
+
+						<p:column headerText="Número Parcela">
+							<p:outputLabel value="#{p.numParcela}ª" />
+						</p:column>
+						<p:column headerText="Status Pagamento">
+							<p:outputLabel value="#{p.estadoPagamento.descricao}" />
+						</p:column>
+
+						<p:column headerText="Data Pagamento">
+							<p:outputLabel value="#{p.dataPagamento}">
+								<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+							</p:outputLabel>
+						</p:column>
+						<p:column style="text-align:center;"
+							headerText="Efetuar Pagamento">
+							<p:commandButton icon="fa fa-check"
+								rendered="#{p.estadoPagamento.descricao ne 'Pago'}"
+								value="Pagar" update=":frmPagParcela"
+								oncomplete="PF('dlgPagParcela').show();">
+								<f:setPropertyActionListener value="#{p}"
+									target="#{entradaMB.parcela}" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+
+				</h:form>
+			</p:dialog>
+
+			<p:dialog header="Concluir pagamento parcela." modal="true"
+				dynamic="true" appendTo="@(body)" resizable="false"
+				widgetVar="dlgPagParcela">
+				<h:form id="frmPagParcela">
+
+					<p:messages id="msgPagamento" closable="true" escape="true" />
+
+					<h:panelGrid cellpadding="10" columns="2">
+
+						<p:outputLabel value="Número parcela:" />
+						<p:inputText readonly="true"
+							value="#{entradaMB.parcela.numParcela}ª" />
+
+						<p:outputLabel value="Data do vencimento:" />
+						<p:inputText readonly="true"
+							value="#{entradaMB.parcela.dataVencimento}">
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</p:inputText>
+
+						<p:outputLabel value="Valor:" />
+						<p:inputText readonly="true" value="#{entradaMB.parcela.valor}">
+							<f:convertNumber pattern="R$#,##0.00" />
+						</p:inputText>
+
+						<p:outputLabel for="data_pagamento" value="Data pagamento:" />
+						<p:calendar id="data_pagamento" navigator="true" mask="99/99/9999"
+							pattern="dd/MM/yyyy"
+							requiredMessage="Data pagamento deve ser informada."
+							required="true" value="#{entradaMB.parcela.dataPagamento}" />
+
+						<p:commandButton oncomplete="PF('dlgConfPagamento').show()"
+							icon="fa fa-check" value="Concluir Pagamento" />
+						<p:commandButton
+							update=":frmExbParcela , :frmExbParcela:tabelaParcela"
+							oncomplete="PF('dlgPagParcela').hide();" value="Fechar"
+							icon="fa fa-close" />
+					</h:panelGrid>
+
+
+				</h:form>
+			</p:dialog>
+
+			<!-- dialog confirmação do pagamento das parcelas -->
+			<p:confirmDialog appendTo="@(body)" widgetVar="dlgConfPagamento"
+				header="Confirmar pagamento da parcela?"
+				message="Deseja efetuar o registro?">
+				<h:form>
+					<p:commandButton 
+						update=":frmPagParcela :frmExbParcela:tabelaParcela, :frmPagParcela:msgPagamento"
+						action="#{entradaMB.efetuarPagamentoParcela}" icon="fa fa-check"
+						oncomplete="PF('dlgConfPagamento').hide()" value="Sim" />
+					<p:commandButton icon="fa fa-close" value="Fechar"
+						oncomplete="PF('dlgConfPagamento').hide()" />
+				</h:form>
+			</p:confirmDialog>
+		</ui:define>
+	</ui:composition>
+
+</body>
+</html>

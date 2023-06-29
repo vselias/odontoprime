@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pageflow:Pageflow xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pageflow="http://www.sybase.com/suade/pageflow" id="pf16857434137720" configfile="/OdontoPrime/src/main/webapp/WEB-INF/faces-config.xml">
+  <nodes xsi:type="pageflow:PFPage" name="*" x="122" y="178" id="pf16857434600881" referenceLink="//@navigationRule.0/@fromViewId|" outlinks="pf16857434600882" path="*"/>
+  <nodes xsi:type="pageflow:PFPage" name="sistema/Paciente.xhtml" x="338" y="178" id="pf16857434600883" referenceLink="//@navigationRule.0/@navigationCase.0/@toViewId|" inlinks="pf16857434600882" path="/sistema/Paciente.xhtml"/>
+  <links id="pf16857434600882" target="pf16857434600883" source="pf16857434600881" outcome="usuarioAutenticado" redirect="true"/>
+</pageflow:Pageflow>

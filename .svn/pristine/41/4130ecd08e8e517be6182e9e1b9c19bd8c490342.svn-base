@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/template/Template.xhtml">
+
+	<ui:define name="content">
+		<f:metadata>
+			<f:viewParam name="id" converter="movimentacaoCaixaConverter"
+				value="#{movimentacaoCaixaMB.movimentacaoCaixa}" />
+		</f:metadata>
+
+		<h:form id="frmAbertura">
+
+			<h3 class="tituloPagina"></h3>
+			<h3 class="tituloPagina">#{movimentacaoCaixaMB.movimentacaoCaixa.tipoMovimentacao.descricao
+				eq 'Fechamento'? 'Editar fechamento':'Fluxo de caixa'}</h3>
+			<ui:include src="/template/MenuFluxoCaixa.xhtml" />
+
+			<p:spacer height="10px;" />
+
+			<p:messages id="msg" closable="true" />
+
+			<div class="ui-grid-responsive">
+
+				<p:panel style="text-align:center;" header="Fluxo de caixa">
+					<center>
+						<div class="ui-grid-row">
+							<div class="ui-grid-col-6">
+								<h:panelGrid cellpadding="5px;" columns="2">
+									<p:outputLabel for="usuario" value="Usuário do sistema" />
+									<br />
+
+									<p:inputText required="true" id="usuario"
+										value="#{movimentacaoCaixaMB.movimentacaoCaixa.usuario.login}"
+										requiredMessage="Usuário deve ser informado."
+										readonly="#{facesContext.currentPhaseId.ordinal eq 6}" />
+									<br />
+
+									<p:outputLabel for="data" value="Data" />
+									<br />
+
+									<p:calendar id="data" required="true" pattern="dd/MM/yyyy"
+										requiredMessage="Data deve ser informada."
+										value="#{movimentacaoCaixaMB.movimentacaoCaixa.data}"
+										mask="99/99/9999" />
+									<br />
+
+
+								</h:panelGrid>
+							</div>
+
+							<div class="ui-grid-col-6">
+								<h:panelGrid cellpadding="5px;" columns="2">
+
+									<p:outputLabel for="valor_inicial" value="Valor inicial" />
+									<br />
+
+									<p:inputText id="valor_inicial"
+										value="#{movimentacaoCaixaMB.movimentacaoCaixa.valorInicial}"
+										maxlength="10" required="true"
+										requiredMessage="Valor inicial deve ser informado.">
+										<f:convertNumber maxFractionDigits="2" minFractionDigits="2" />
+									</p:inputText>
+									<br />
+
+
+									<p:outputLabel value="Status caixa" />
+									<br />
+									<p:selectOneMenu
+										value="#{movimentacaoCaixaMB.movimentacaoCaixa.tipoMovimentacao}">
+										<f:selectItems var="e" itemValue="#{e}"
+											itemLabel="#{e.descricao}"
+											value="#{movimentacaoCaixaMB.tiposMovimentacao}" />
+									</p:selectOneMenu>
+								</h:panelGrid>
+							</div>
+
+						</div>
+					</center>
+				</p:panel>
+			</div>
+		</h:form>
+
+	</ui:define>
+</ui:composition>
+
+</html>

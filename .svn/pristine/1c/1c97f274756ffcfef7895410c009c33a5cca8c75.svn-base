@@ -1,0 +1,92 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+
+	<p:sticky target="menuAdm" />
+
+
+	<p:menubar id="menuAdm" styleClass="menu">
+		<p:submenu icon="fa fa-adn" label="Administrativo">
+			<p:menuitem styleClass="menuitem" icon="fa fa-calendar"
+				process="@this"
+				action="/sistema/adm/VendasPorData?faces-redirect=true"
+				value="Vendas por data" />
+			<p:menuitem icon="fa fa-user" process="@this"
+				action="/sistema/adm/VendasPorPaciente?faces-redirect=true"
+				value="Vendas por paciente" />
+			<p:menuitem icon="fa fa-sun-o"
+				action="/sistema/adm/VendasPorDia?faces-redirect=true"
+				process="@this" ajax="false" value="Vendas hoje" />
+			<p:menuitem icon="fa fa-plus"
+				action="/sistema/adm/Entrada?faces-redirect=true" process="@this"
+				ajax="false" value="Entrada" />
+			<p:menuitem icon="fa fa-minus"
+				action="/sistema/adm/Saida?faces-redirect=true" process="@this"
+				ajax="false" value="Saída" />
+		</p:submenu>
+
+
+		<p:submenu icon="fa fa-hospital-o" label="Consulta">
+			<p:menuitem icon="fa fa-floppy-o"
+				action="/sistema/Consulta?faces-redirect=true" value="Cadastrar" />
+			<p:menuitem icon="fa fa-check-circle" value="Definir estado"
+				action="/sistema/DefinirEstado?faces-redirect=true" />
+
+			<p:menuitem icon="fa fa-list-ol" value="Exibir"
+				action="/sistema/PesquisaConsulta?faces-redirect=true" />
+
+		</p:submenu>
+		<p:submenu icon="fa fa-calculator" label="Fluxo de Caixa">
+			<p:menuitem icon="fa fa-check" value="Fechar"
+				action="/sistema/adm/FechamentoCaixa?faces-redirect=true" />
+			<p:menuitem icon="fa fa-list-ol" value="Exibir"
+				action="/sistema/adm/PesquisaFluxoCaixa?faces-redirect=true" />
+		</p:submenu>
+		<p:submenu icon="fa fa-pie-chart" label="Gráficos">
+			<p:menuitem icon="fa fa-calendar"
+				action="/sistema/adm/NovoGrafico?faces-redirect=true"
+				value="Gráfico por ano" />
+		</p:submenu>
+		<p:submenu icon="fa fa-money" label="Orçamento">
+
+			<p:menuitem icon="fa fa-floppy-o" value="Orçamento"
+				action="/sistema/Orcamento?faces-redirect=true" />
+			<p:menuitem icon="fa fa-list-ol" value="Exibir"
+				action="/sistema/PesquisaOrcamento?faces-redirect=true" />
+		</p:submenu>
+
+		<p:submenu icon="fa fa-user" label="Paciente">
+			<p:menuitem icon="fa fa-user"
+				action="/sistema/Paciente?faces-redirect=true" value="Paciente" />
+			<p:menuitem icon="fa fa-list-ol" value="Exibir"
+				action="/sistema/PesquisaPaciente?faces-redirect=true" />
+			<p:menuitem value="Galeria" icon="fa fa-image"
+				action="/sistema/Galeria?faces-redirect=true" />
+		</p:submenu>
+
+		<p:submenu icon="fa fa-file-text-o" label="Relatórios">
+			<p:menuitem icon="fa fa-user" value="Paciente"
+				action="/sistema/RelatorioPaciente?faces-redirect=true" />
+			<p:menuitem icon="fa fa-hospital-o" value="Consulta"
+				action="/sistema/RelatorioConsulta?faces-redirect=true" />
+		</p:submenu>
+
+		<p:submenu icon="fa fa-users" label="Usuário">
+			<p:menuitem icon="fa fa-users"
+				action="/sistema/adm/Usuario?faces-redirect=true" value="Usuário" />
+			<p:menuitem icon="fa fa-list-ol"
+				action="/sistema/adm/PesquisaUsuario?faces-redirect=true"
+				value="Exibir" />
+
+		</p:submenu>
+		<p:submenu icon="fa fa-sign-out" label="Sair">
+			<p:menuitem oncomplete="PF('confirmarSaida').show();"
+				icon="fa fa-sign-out" value="Sair" />
+
+		</p:submenu>
+
+	</p:menubar>
+</ui:composition>

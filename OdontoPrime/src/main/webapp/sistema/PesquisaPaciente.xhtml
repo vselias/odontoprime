@@ -1,0 +1,185 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/template/Template.xhtml">
+
+	<ui:define name="content">
+		<h3 style="text-align: right" class="tituloPagina">Lista de
+			Paciente</h3>
+
+		<h:form id="frmTblPac">
+
+			<ui:include src="/template/MenuPesquisaPaciente.xhtml" />
+
+			<p:messages id="msg" />
+
+			<center>
+				<p:dataTable styleClass="tabela" value="#{pacienteMB.pacientes}"
+					paginatorPosition="top" var="p" paginator="true"
+					tableStyle="width:auto" resizableColumns="true"
+					rowsPerPageTemplate="5,10,15" rows="5"
+					filteredValue="#{pacienteMB.listaPesquisa}"
+					emptyMessage="Nenhum registro." rowKey="#{p.id}" widgetVar="tabela"
+					selection="#{pacienteMB.paciente}" selectionMode="single"
+					id="tblPacientes">
+
+					<p:column headerText="Foto">
+
+						<p:graphicImage cache="false" width="100px" height="100px"
+							rendered="#{p.nomeImagem eq null or p.nomeImagem eq ''}"
+							value="/img/new-user.png" />
+						<p:graphicImage cache="false" width="100px" height="100px"
+							rendered="#{p.nomeImagem ne null and p.nomeImagem ne ''}"
+							value="/imagens/#{p.nomeImagem}" />
+					</p:column>
+
+					<p:column sortBy="#{p.nome}" filterBy="#{p.nome}" headerText="Nome">
+						<p:outputLabel value="#{p.nome}" />
+
+					</p:column>
+
+					<p:column sortBy="#{p.cpf}" filterBy="#{p.cpf}" headerText="CPF">
+						<p:outputLabel value="#{p.cpf}" />
+
+					</p:column>
+					<p:column filterMatchMode="contains" filterBy="#{p.dataNascimento}"
+						sortBy="#{p.dataNascimento}" headerText="Data de Nascimento">
+						<p:outputLabel value="#{p.dataNascimento}">
+							<f:convertDateTime locale="pt_BR" />
+						</p:outputLabel>
+						<p:outputLabel rendered="#{p.dataNascimento eq null}"
+							value="Não informado." />
+
+					</p:column>
+					<p:column sortBy="#{p.email}" filterBy="#{p.email}"
+						headerText="e-Mail">
+
+						<p:outputLabel value="#{p.email}" />
+
+						<p:outputLabel rendered="#{p.email eq ''}" value="Não informado." />
+
+					</p:column>
+					<p:column sortBy="#{p.sexo}" filterBy="#{p.sexo}" headerText="Sexo">
+						<p:outputLabel value="#{p.sexo}" />
+
+					</p:column>
+
+					<p:column style="text-align:center;" headerText="Ações">
+						<p:commandButton oncomplete="PF('dlgDetalheEndereco').show()"
+							update=":frmDetalheEndereco" icon="fa fa-search">
+							<f:setPropertyActionListener value="#{p}"
+								target="#{pacienteMB.paciente}" />
+						</p:commandButton>
+
+						<p:spacer width="10px;" />
+
+						<p:button icon="fa fa-edit" outcome="Paciente">
+							<f:param name="codigo" value="#{p.id}" />
+						</p:button>
+
+						<p:spacer width="10px;" />
+
+						<p:commandButton update="@form" oncomplete="PF('exclusao').show()"
+							icon="fa fa-trash">
+							<f:setPropertyActionListener value="#{p}"
+								target="#{pacienteMB.paciente}" />
+						</p:commandButton>
+
+						<p:spacer width="10px;" />
+
+						<p:commandButton update=":frmDetalhePaciente"
+							oncomplete="PF('dlgDetalhePaciente').show();" icon="fa fa-info">
+							<f:setPropertyActionListener value="#{p}"
+								target="#{pacienteMB.paciente}" />
+						</p:commandButton>
+
+
+					</p:column>
+
+				</p:dataTable>
+			</center>
+
+			<!-- 				dialog exclusão paciente -->
+
+			<p:confirmDialog widgetVar="exclusao" severity="alert"
+				header="Confirmação exclusão paciente"
+				message="Você deseja remover paciente #{pacienteMB.paciente.nome}?">
+				<p:commandButton update="@form , msg" value="Sim"
+					oncomplete="PF('exclusao').hide()"
+					action="#{pacienteMB.excluirPaciente}" />
+
+				<p:commandButton value="Não" oncomplete="PF('exclusao').hide()" />
+			</p:confirmDialog>
+		</h:form>
+
+		<!-- 	dialog exibir informações do cadastro do paciente -->
+
+		<p:dialog header="Informações do cadastro do paciente"
+			draggable="false" resizable="false" modal="true" appendTo="@(body)"
+			widgetVar="dlgDetalhePaciente">
+			<h:form id="frmDetalhePaciente">
+				<h:panelGrid cellpadding="5px;" columns="2">
+					<p:outputLabel value="Cadastrado por:" />
+					<p:inputText readonly="true"
+						value="#{pacienteMB.paciente.nomeUsuarioRegistrou}" />
+
+					<p:outputLabel value="Data cadastro:" />
+					<p:inputText readonly="true"
+						value="#{pacienteMB.paciente.dataCadastro}">
+						<f:convertDateTime locale="pt_BR" timeZone="America/Sao_Paulo"
+							pattern="dd/MM/yyyy HH:mm:ss" />
+					</p:inputText>
+					<p:outputLabel value="Status cadastro:" />
+					<p:inputText readonly="true"
+						value="#{pacienteMB.paciente.statusCadastro.descricao}" />
+
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="Informações do endereço do paciente"
+			draggable="false" resizable="false" modal="true" appendTo="@(body)"
+			widgetVar="dlgDetalheEndereco">
+			<h:form id="frmDetalheEndereco">
+				<h:panelGrid cellpadding="5px;" columns="2">
+					<p:outputLabel value="Paciente:" />
+					<p:inputText readonly="true" value="#{pacienteMB.paciente.nome}" />
+
+					<p:outputLabel value="Rua:" />
+					<p:inputText readonly="true"
+						value="#{pacienteMB.paciente.endereco.rua eq ''? 'Não informado!': pacienteMB.paciente.endereco.rua}" />
+
+
+
+					<p:outputLabel value="Número:" />
+					<p:inputText readonly="true"
+						value="#{pacienteMB.paciente.endereco.numero}" />
+
+
+					<p:outputLabel value="Bairro:" />
+					<p:inputText readonly="true"
+						value="#{pacienteMB.paciente.endereco.bairro eq ''? 'Não informado!': pacienteMB.paciente.endereco.bairro}" />
+
+					<p:outputLabel value="Cidade:" />
+					<p:inputText readonly="true"
+						value="#{pacienteMB.paciente.endereco.cidade eq ''? 'Não informado!': pacienteMB.paciente.endereco.cidade}" />
+
+					<p:outputLabel value="Estado" />
+					<p:inputText readonly="true"
+						value="#{pacienteMB.paciente.endereco.estado.descricao eq null? 'Não informado!': pacienteMB.paciente.endereco.estado.descricao}" />
+
+
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+
+
+</ui:composition>
+</html>

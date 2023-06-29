@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+
+<h:form id="frmExbParcela">
+	
+	<h4>Parcelas cujo pagamento foram efetuadas hoje as linhas da tabela são destacadas com a cor verde.</h4>
+	
+	<p:dataTable tableStyle="width:auto" resizableColumns="true"
+		rowStyleClass="#{movimentacaoCaixaMB.isParcelaPaga(p)?'destacarPagamento':''}"
+		paginator="true" rowsPerPageTemplate="5,10,15"
+		value="#{movimentacaoCaixaMB.entradaVO.parcelas}" var="p">
+		<p:column headerText="Valor / Parcela">
+
+			<p:outputLabel value="#{p.valor}">
+				<f:convertNumber pattern="R$#,##0.00" />
+			</p:outputLabel>
+
+		</p:column>
+
+		<p:column headerText="Data do Vencimento">
+			<p:outputLabel value="#{p.dataVencimento}">
+				<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+			</p:outputLabel>
+		</p:column>
+
+		<p:column headerText="Número da Parcela">
+			<p:outputLabel value="#{p.numParcela}ª" />
+		</p:column>
+		<p:column headerText="Status do Pagamento">
+			<p:outputLabel value="#{p.estadoPagamento.descricao}" />
+		</p:column>
+
+		<p:column headerText="Data do Pagamento">
+			<p:outputLabel value="#{p.dataPagamento}">
+				<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+			</p:outputLabel>
+		</p:column>
+	</p:dataTable>
+</h:form>
+
+</html>

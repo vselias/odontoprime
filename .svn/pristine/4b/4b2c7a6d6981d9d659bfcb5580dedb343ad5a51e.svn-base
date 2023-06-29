@@ -1,0 +1,126 @@
+package br.com.odontoprime.entidade;
+
+import java.io.Serializable;
+import java.util.Date;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+@Entity
+@SequenceGenerator(name = "saida_seq", sequenceName = "seq_saida", allocationSize = 2)
+public class Saida implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6649126527010207089L;
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "saida_seq")
+	private Long id;
+	private String motivo;
+	private String descricao;
+	@Temporal(TemporalType.DATE)
+	private Date dataSaida;
+	private Double valor;
+	private String item;
+	private int quantidade;
+	@OneToOne
+	private Usuario usuario;
+	@Enumerated(EnumType.STRING)
+	private StatusCadastro statusCadastro;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date dataCadastro;
+
+	public Date getDataCadastro() {
+		return dataCadastro;
+	}
+
+	public void setDataCadastro(Date dataCadastro) {
+		this.dataCadastro = dataCadastro;
+	}
+
+	public StatusCadastro getStatusCadastro() {
+		return statusCadastro;
+	}
+
+	public void setStatusCadastro(StatusCadastro statusCadastro) {
+		this.statusCadastro = statusCadastro;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public int getQuantidade() {
+		return quantidade;
+	}
+
+	public void setQuantidade(int quantidade) {
+		this.quantidade = quantidade;
+	}
+
+	public String getMotivo() {
+		return motivo;
+	}
+
+	public void setMotivo(String motivo) {
+		this.motivo = motivo;
+	}
+
+	public String getDescricao() {
+		return descricao;
+	}
+
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
+	}
+
+	public Date getDataSaida() {
+		return dataSaida;
+	}
+
+	public void setDataSaida(Date dataSaida) {
+		this.dataSaida = dataSaida;
+	}
+
+	public Double getValor() {
+		return valor;
+	}
+
+	public void setValor(Double valor) {
+		this.valor = valor;
+	}
+
+	public String getItem() {
+		return item;
+	}
+
+	public void setItem(String item) {
+		this.item = item;
+	}
+
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
+
+	public boolean novaSaida() {
+		return getId() == null;
+	}
+}

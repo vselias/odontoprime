@@ -1,0 +1,130 @@
+package br.com.odontoprime.bean;
+
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.omnifaces.cdi.ViewScoped;
+import org.omnifaces.filter.OnDemandResponseBufferFilter;
+import org.primefaces.component.datatable.DataTable;
+import org.primefaces.event.CellEditEvent;
+import org.primefaces.event.RowEditEvent;
+import org.primefaces.event.SelectEvent;
+
+import br.com.odontoprime.entidade.Consulta;
+import br.com.odontoprime.entidade.Entrada;
+import br.com.odontoprime.entidade.EstadoPagamento;
+import br.com.odontoprime.entidade.Parcela;
+import br.com.odontoprime.service.ConsultaService;
+import br.com.odontoprime.service.EntradaService;
+import br.com.odontoprime.service.MovimentacaoCaixaService;
+import br.com.odontoprime.service.ParcelaService;
+import br.com.odontoprime.util.MensagemUtil;
+
+@Named
+@ViewScoped
+public class EntradaMB implements Serializable {
+
+	private static final long serialVersionUID = 6383242975512655099L;
+	@Inject
+	private EntradaService entradaService;
+	private Date dataPesquisa;
+	private List<Entrada> movimentacoes;
+	private List<Consulta> consultas;
+	private Entrada entrada;
+	private EstadoPagamento estadoPagamento;
+	private Parcela parcela;
+	@Inject
+	private ParcelaService parcelaService;
+
+	@Inject
+	private ConsultaService consultaService;
+
+	private Consulta consulta;
+
+	public Parcela getParcela() {
+		return parcela;
+	}
+
+	public void setParcela(Parcela parcela) {
+		this.parcela = parcela;
+	}
+
+	public EstadoPagamento getEstadoPagamento() {
+		estadoPagamento = EstadoPagamento.PAGO;
+		return estadoPagamento;
+	}
+
+	public Entrada getEntrada() {
+		return entrada;
+	}
+
+	public void setEntrada(Entrada entrada) {
+		this.entrada = entrada;
+	}
+
+	@PostConstruct
+	public void initi() {
+		consultas = consultaService.buscarTodos();
+		consulta = new Consulta();
+		parcela = new Parcela();
+	}
+
+	public Consulta getConsulta() {
+		return consulta;
+	}
+
+	public void setConsulta(Consulta consulta) {
+		this.consulta = consulta;
+	}
+
+	public List<Consulta> getConsultas() {
+		return consultas;
+	}
+
+	public List<Entrada> getMovimentacoes() {
+		return movimentacoes;
+	}
+
+	public void setMovimentacoes(List<Entrada> movimentacoes) {
+		this.movimentacoes = movimentacoes;
+	}
+
+	public Date getDataPesquisa() {
+		return dataPesquisa;
+	}
+
+	public void setDataPesquisa(Date dataPesquisa) {
+		this.dataPesquisa = dataPesquisa;
+	}
+
+	public void buscarEntradaPorData() {
+		movimentacoes = entradaService.buscarEntradaPorData(dataPesquisa);
+	}
+
+	public void selecionarEntrada(Entrada entrada) {
+		this.entrada = entradaService.buscarEntradaComParcelas(entrada.getId());
+	}
+
+	public void efetuarPagamentoParcela() {
+		parcelaService.efetuarPagamentoParcela(parcela, entrada);
+	}
+
+	public void mensagemCancelamentoPagamentoParcela() {
+		MensagemUtil.enviarMensagem("Pagamento cancelado!", FacesMessage.SEVERITY_INFO);
+	}
+
+	public void cancelarPagamentoParcela() {
+		parcelaService.cancelarPagamento(parcela);
+	}
+
+	public void limparDataPagamento() {
+		parcelaService.limparDataPagamentoParcela(parcela);
+	}
+}

@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/template/Template.xhtml">
+
+	<ui:define name="content">
+
+		<h:form>
+
+			<h3 class="tituloPagina">Lista do Caixa</h3>
+
+			<ui:include src="/template/MenuPesquisaFluxoCaixa.xhtml" />
+
+			<p:spacer height="10px;" />
+
+			<center>
+				<p:dataTable tableStyle="width:auto" resizableColumns="true"
+					var="movimentacao" rowKey="#{movimentacao.id}" paginator="true"
+					rowsPerPageTemplate="5,10,15"
+					selection="#{movimentacaoCaixaMB.movimentacaoCaixa}"
+					selectionMode="single"
+					value="#{movimentacaoCaixaMB.movimentacaoCaixas}"
+					emptyMessage="Nenhum registro.">
+
+
+					<p:column headerText="Foto">
+						<p:graphicImage width="100px" height="100px" cache="false"
+							rendered="#{movimentacaoCaixa.usuario.nomeImagem eq null}"
+							value="/img/new-user.png" />
+					</p:column>
+
+					<p:column filterBy="#{movimentacao.usuario.login}"
+						sortBy="#{movimentacao.usuario.login}" headerText="Usuário">
+						<p:outputLabel value="#{movimentacao.usuario.login}" />
+					</p:column>
+
+					<p:column filterBy="#{movimentacao.data}"
+						sortBy="#{movimentacao.data}" headerText="Data">
+						<p:outputLabel value="#{movimentacao.data}">
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm:ss" />
+						</p:outputLabel>
+					</p:column>
+
+					<p:column filterBy="#{movimentacao.valorInicial}"
+						sortBy="#{movimentacao.valorInicial}" headerText="Valor inicial">
+						<p:outputLabel value="#{movimentacao.valorInicial}">
+							<f:convertNumber pattern="+ R$ #,##0.00" />
+						</p:outputLabel>
+					</p:column>
+
+					<p:column filterBy="#{movimentacao.entrada}"
+						sortBy="#{movimentacao.entrada}" headerText="Entrada">
+						<p:outputLabel value="#{movimentacao.entrada}">
+							<f:convertNumber pattern="+ R$ #,##0.00" />
+						</p:outputLabel>
+					</p:column>
+
+					<p:column filterBy="#{movimentacao.saida}"
+						sortBy="#{movimentacao.saida}" headerText="Saída">
+						<p:outputLabel value="#{movimentacao.saida}">
+							<f:convertNumber pattern="- R$ #,##0.00" />
+						</p:outputLabel>
+					</p:column>
+					<p:column filterBy="#{movimentacao.valorTotal}"
+						sortBy="#{movimentacao.valorTotal}" headerText="Valor total">
+						<p:outputLabel value="#{movimentacao.valorTotal}">
+							<f:convertNumber pattern=" R$ #,##0.00" />
+						</p:outputLabel>
+					</p:column>
+					<p:column headerText="Ações">
+						<p:commandButton update=":frmInfoFluxo"
+							oncomplete="PF('dlgInfoFluxo').show()" icon="fa fa-info">
+							<f:setPropertyActionListener value="#{movimentacao}"
+								target="#{movimentacaoCaixaMB.movimentacaoCaixa}" />
+						</p:commandButton>
+						<p:spacer width="5" />
+						<p:commandButton icon="fa fa-pencil"
+							action="#{movimentacaoCaixaMB.editarMovimentacao(movimentacao)}" />
+					</p:column>
+				</p:dataTable>
+			</center>
+		</h:form>
+
+
+		<p:dialog modal="true" resizable="false" widgetVar="dlgInfoFluxo"
+			responsive="true" appendTo="@(body)" closeOnEscape="true"
+			closable="true" header="Informações adicionais fluxo de caixa">
+			<h:form id="frmInfoFluxo">
+				<p:panelGrid columns="2">
+					<p:outputLabel value="Usuário:" />
+					<p:outputLabel
+						rendered="#{movimentacaoCaixaMB.movimentacaoCaixa.usuario.adm}"
+						value="Admnistrador" />
+					<p:outputLabel
+						rendered="#{not movimentacaoCaixaMB.movimentacaoCaixa.usuario.adm}"
+						value="Normal" />
+					<p:outputLabel value="Status Cadastro:" />
+					<p:outputLabel
+						value="#{movimentacaoCaixaMB.movimentacaoCaixa.statusCadastro.descricao}" />
+					<p:outputLabel value="Estado Movimetacação:" />
+					<p:outputLabel
+						value="#{movimentacaoCaixaMB.movimentacaoCaixa.tipoMovimentacao.descricao}" />
+				</p:panelGrid>
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+
+</ui:composition>
+
+</html>

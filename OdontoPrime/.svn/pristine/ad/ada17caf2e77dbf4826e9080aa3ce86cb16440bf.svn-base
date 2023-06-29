@@ -1,0 +1,27 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:toolbar style="marin" id="idToolbar">
+		<p:toolbarGroup>
+
+
+			<p:commandButton actionListener="#{orcamentoMB.limparCampos}"
+				process="@this" update="frmOrcamento , msg" value="Limpar"
+				icon="fa fa-file-o">
+				<p:resetInput target="frmOrcamento" />
+			</p:commandButton>
+			<p:separator />
+			<p:commandButton update="frmOrcamento msg"
+				action="#{orcamentoMB.salvar}" icon="fa fa-floppy-o" value="Salvar" />
+
+		</p:toolbarGroup>
+		<p:toolbarGroup align="right">
+			<p:separator />
+			<p:button value="Pesquisar" icon="fa fa-search"
+				outcome="PesquisaOrcamento.xhtml" />
+		</p:toolbarGroup>
+	</p:toolbar>
+</ui:composition>

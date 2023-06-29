@@ -1,0 +1,155 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+
+<ui:composition template="/template/Template.xhtml">
+
+	<ui:define name="content">
+
+		<h:form id="formVendasPorData">
+
+			<h3 class="tituloPagina">Vendas por Data</h3>
+
+
+			<ui:include src="/template/MenuVendas.xhtml" />
+
+			<p:spacer height="10px;" />
+
+			<p:panel header="Pesquisa de vendas por data">
+				<center>
+					<p:panelGrid styleClass="ui-panelgrid-blank" layout="grid"
+						columnClasses="ui-grid-col-2,
+					ui-grid-col-4,
+					ui-grid-col-2,
+					ui-grid-col-4"
+						columns="4" id="panelGrid">
+
+						<p:outputLabel value="Data inicial" />
+						<p:calendar navigator="true" mode="inline" id="dataInicio"
+							value="#{registroVendaMB.dataInicio}" />
+						<p:outputLabel value="Data final" />
+						<p:calendar navigator="true" mode="inline" id="dataFinal"
+							value="#{registroVendaMB.dataFinal}" />
+					</p:panelGrid>
+					<p:spacer height="30" />
+					<p:commandButton update="@form"
+						action="#{registroVendaMB.calcularVendaPorData}" value="Buscar">
+					</p:commandButton>
+				</center>
+			</p:panel>
+
+			<h:panelGrid cellpadding="5" styleClass="panelGrid" id="panelVenda"
+				columns="2">
+				<p:outputLabel value="Data início" />
+				<p:outputLabel value="#{registroVendaMB.dataInicio}">
+					<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+				</p:outputLabel>
+				<p:outputLabel value="Data final" />
+				<p:outputLabel value="#{registroVendaMB.dataFinal}">
+					<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+				</p:outputLabel>
+				<p:outputLabel rendered="#{registroVendaMB.valorTotal ne null}"
+					value="#{registroVendaMB.valorTotal}">
+					<f:convertNumber pattern="Valor Total R$ #,##0.00" />
+				</p:outputLabel>
+				<p:spacer rendered="#{registroVendaMB.valorTotal eq 0}" />
+			</h:panelGrid>
+
+			<center>
+				<p:dataTable widgetVar="table" emptyMessage="Nenhum registro."
+					id="consultas" rows="5" paginatorPosition="bottom"
+					selection="#{registroVendaMB.consulta}" rowKey="#{c.id}"
+					selectionMode="single" rowsPerPageTemplate="5,10,15"
+					paginator="true" value="#{registroVendaMB.consultasPorData}"
+					var="c">
+
+					<f:facet name="header">
+						<h:outputText value="Vendas de " />
+						<h:outputText value="#{registroVendaMB.dataInicio}">
+							<f:convertDateTime locale="pt_BR" timeZone="America/Sao_Paulo"
+								pattern="dd/MM/yyyy" />
+						</h:outputText>
+						<h:outputText value=" até " />
+						<h:outputText value="#{registroVendaMB.dataFinal}">
+							<f:convertDateTime timeZone="America/Sao_Paulo"
+								pattern="dd/MM/yyyy" locale="pt_BR" />
+						</h:outputText>
+					</f:facet>
+					<p:column sortBy="#{c.id}" filterBy="#{c.id}" headerText="ID">
+						<p:outputLabel value="#{c.id}" />
+
+					</p:column>
+
+					<p:column exportable="false" style="text-align:center;"
+						headerText="Foto">
+						<p:graphicImage
+							rendered="#{c.paciente.nomeImagem eq null or c.paciente.nomeImagem eq ''}"
+							value="/img/new-user.png" cache="false" width="100px;"
+							height="100px;" />
+						<p:graphicImage
+							rendered="#{c.paciente.nomeImagem ne null and c.paciente.nomeImagem ne ''}"
+							value="/imagens/#{c.paciente.nomeImagem}" cache="false"
+							width="100px;" height="100px;" />
+					</p:column>
+
+					<p:column sortBy="#{c.paciente.nome}" filterBy="#{c.paciente.nome}"
+						headerText="Paciente">
+						<p:outputLabel value="#{c.paciente.nome}" />
+
+					</p:column>
+
+					<p:column sortBy="#{c.tipoConsulta.descricao}"
+						filterBy="#{c.tipoConsulta.descricao}" headerText="Consulta">
+						<p:outputLabel value="#{c.tipoConsulta.descricao}" />
+
+						<p:outputLabel rendered="#{c.tipoConsulta eq null}"
+							value="Não informado." />
+					</p:column>
+
+					<p:column filterStyle="display:none;" sortBy="#{c.dataConsulta}"
+						filterBy="#{c.dataConsulta}" headerText="Data da consulta">
+						<p:outputLabel value="#{c.dataConsulta}">
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"
+								timeZone="America/Sao_Paulo" />
+						</p:outputLabel>
+					</p:column>
+
+					<p:column filterStyle="display:none;" sortBy="#{c.dataCadastro}"
+						filterBy="#{c.dataCadastro}" headerText="Data do Registro">
+						<p:outputLabel value="#{c.dataCadastro}">
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"
+								timeZone="America/Sao_Paulo" />
+						</p:outputLabel>
+					</p:column>
+					<p:column sortBy="#{c.entrada.valorComDesconto}"
+						filterBy="#{c.entrada.valorComDesconto}" headerText="Valor">
+						<p:outputLabel value="#{c.entrada.valorComDesconto}">
+							<f:convertNumber pattern="R$ #,##0.00" />
+						</p:outputLabel>
+					</p:column>
+					<f:facet name="footer">
+						<p:commandLink
+							rendered="#{not empty registroVendaMB.consultasPorData}"
+							ajax="false" id="pdf">
+							<p:graphicImage value="/img/pdf.png" />
+							<pe:exporter type="pdf" target="consultas"
+								preProcessor="#{registroVendaMB.gerarConsultasPdf}"
+								fileName="consultas_por_data" encoding="iso-8859-1" />
+						</p:commandLink>
+					</f:facet>
+				</p:dataTable>
+			</center>
+		</h:form>
+	</ui:define>
+
+</ui:composition>
+
+
+
+</html>

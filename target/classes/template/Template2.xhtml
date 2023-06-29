@@ -1,0 +1,265 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+<h:head>
+	<ui:insert name="title">
+		<title>Odonto Prime</title>
+	</ui:insert>
+	<script type="text/javascript"
+		src="#{request.contextPath}/js/calendario_pt_BR.js" />
+	<link href="#{request.contextPath}/css/estilo.css" rel="stylesheet"
+		type="text/css" />
+	<h:outputScript name="jquery/jquery-plugins.js" library="primefaces" />
+	<h:outputStylesheet name="grid/grid.css" library="primefaces" />
+
+
+	<link type="text/css" rel="stylesheet"
+		href="/primefaces/faces/javax.faces.resource/primefaces.css?ln=primefaces" />
+
+	<script type="text/javascript"
+		src="/primefaces/faces/javax.faces.resource/jquery/jquery.js?ln=primefaces"></script>
+	<script type="text/javascript"
+		src="/primefaces/faces/javax.faces.resource/primefaces.js?ln=primefaces"></script>
+</h:head>
+<f:view contentType="text/html">
+	<h:body id="body">
+
+		<div class="ui-grid-responsive">
+			<div class="ui-grid-row">
+				<div class="ui-grid-col-12">
+					<div id="header" class="barra-logo ">
+						<div class="ui-grid-row">
+							<div class="ui-grid-col-4">
+								<h:form>
+									<p:commandLink action="/sistema/Inicio?faces-redirect=true">
+										<h:graphicImage styleClass="imgLogo" value="/img/logo.png" />
+									</p:commandLink>
+								</h:form>
+							</div>
+
+							<div style="text-align: right; padding-right: 10px"
+								class="ui-grid-col-8"></div>
+						</div>
+
+						<h:form>
+							<h:panelGroup rendered="#{usuarioController.usuario.adm}">
+								<ui:include src="/template/MenuAdm.xhtml" />
+							</h:panelGroup>
+							<h:panelGroup rendered="#{not usuarioController.usuario.adm}">
+								<ui:include src="/template/MenuNormal.xhtml" />
+							</h:panelGroup>
+						</h:form>
+						<ui:insert name="header" />
+					</div>
+
+
+
+					<p:spacer height="10" />
+
+					<div id="content">
+						<h:form id="formGlobal">
+
+							<p:growl id="msgGlobal" autoUpdate="false" sticky="false"
+								showDetail="false" />
+						</h:form>
+
+						<div class="ui-grid-responsive">
+							<div class="ui-grid-row">
+								<div class="ui-grid-col-1">
+									<p:graphicImage
+										rendered="#{usuarioController.usuario.nomeImagem eq null}"
+										width="100px" height="100px" value="/img/new-user.png" />
+
+									<p:graphicImage id="fotoDefinida"
+										rendered="#{usuarioController.usuario.nomeImagem ne null}"
+										width="100px" height="100px" cache="false"
+										value="/imagens/#{usuarioController.usuario.nomeImagem}" />
+
+								</div>
+								<div class="ui-grid-col-4">
+									<p:outputLabel value="Usuário: " />
+									<p:outputLabel value="#{usuarioController.usuario.login}" />
+									<br />
+									<p:outputLabel value="Nível: " />
+									<p:outputLabel rendered="#{usuarioController.usuario.adm}"
+										value="Administrador" />
+									<p:outputLabel styleClass="nomeUsuario"
+										rendered="#{not usuarioController.usuario.adm}"
+										value="Usuário" />
+									<br />
+
+									<p:commandLink oncomplete="PF('dlgEditUsuario').show();"
+										value="Alterar Imagem" />
+
+
+
+									<p:confirmDialog widgetVar="confirmarSaida"
+										header="Finalizando..."
+										message="Deseja realmente sair do sistema?">
+
+										<p:commandButton oncomplete="PF('confirmarSaida').hide()"
+											action="#{usuarioController.registrarSaida}" value="Sim" />
+
+										<p:commandButton onclick="PF('confirmarSaida').hide()"
+											value="Não" />
+
+									</p:confirmDialog>
+								</div>
+							</div>
+						</div>
+
+
+
+
+						<hr />
+						<ui:insert name="content" />
+
+					</div>
+					<hr />
+					<div id="footer">
+
+						<p:graphicImage style="padding:2px" width="55px" height="35px"
+							value="/img/logo.png" />
+						<h6 class="tituloFooter">
+							Todos direitos reservados ®. desenvolvido por: <a target="_black"
+								href="https://www.facebook.com/viniciuseliasxd">Vinícius
+								Elias Moreira.</a>
+						</h6>
+						<ui:insert name="footer">
+						</ui:insert>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+
+
+		<!-- 		PRIMEIRO DIALOG -->
+		<p:dialog closable="true" closeOnEscape="true" resizable="false"
+			draggable="true" dynamic="true" modal="true"
+			widgetVar="dlgEditUsuario" appendTo="@(body)">
+
+			<h:form id="frmEditUsuario">
+				<p:messages id="msg" />
+				<div class="ui-grid-responsive">
+					<div class="ui-grid-row">
+						<div class="ui-grid-col-12">
+							<p:panel id="pnlFotoPerfil">
+								<center>
+									<p:graphicImage
+										rendered="#{usuarioController.usuario.nomeImagem eq null}"
+										width="100px" height="100px" value="/img/new-user.png" />
+
+									<p:graphicImage id="fotoPerfil" cache="false"
+										rendered="#{usuarioController.usuario.nomeImagem ne null}"
+										width="100px" height="100px"
+										value="/imagens/#{usuarioController.usuario.nomeImagem}" />
+									<br /> <br />
+
+									<p:spacer height="15px" />
+
+									<p:commandButton icon="fa fa-pencil"
+										update=":frmEditFotoPerfil:imgEditDefault, :frmEditFotoPerfil:imgCropper"
+										process="@this"
+										actionListener="#{usuarioController.esconderImagens}"
+										oncomplete="PF('dlgFotoPerfilUsuario').show()"
+										value="Alterar Imagem" />
+
+								</center>
+							</p:panel>
+						</div>
+
+					</div>
+				</div>
+
+			</h:form>
+		</p:dialog>
+
+
+
+
+		<!-- SEGUNDO DIALOG -->
+		<div class="ui-grid-responsie">
+			<div class="ui-grid-row">
+				<div class="ui-grid-col-12">
+
+					<p:dialog width="800" height="500" dynamic="true"
+						closeOnEscape="true" closable="true" modal="true" draggable="true"
+						appendTo="@(body)" widgetVar="dlgFotoPerfilUsuario">
+
+						<h:form id="frmEditFotoPerfil">
+							<p:messages id="msgFotoRecortada" />
+
+							<div class="ui-grid-responsive">
+								<div class="ui-grid-row">
+									<div class="ui-grid-col-6">
+
+										<p:panel id="pnlFotoEditar">
+
+											<p:graphicImage id="imgEditDefault" cache="false"
+												rendered="#{not usuarioController.exibirImagemCropper}"
+												width="100px" height="100px" value="/img/new-user.png" />
+
+											<p:imageCropper id="imgCropper"
+												rendered="#{usuarioController.exibirImagemCropper}"
+												value="#{usuarioController.croppedImage}"
+												image="/temp/imagens/#{usuarioController.usuario.nomeImagemCropper}" />
+
+										</p:panel>
+
+									</div>
+
+
+									<div class="ui-grid-col-6">
+										<p:panel rendered="#{usuarioController.exibirImagemRecortada}"
+											id="pnlImgCortar">
+											<center>
+
+												<p:graphicImage id="imgRecortada" cache="false"
+													value="/temp/imagens/#{usuarioController.usuario.nomeImagemRecortada}" />
+
+												<br /> <br />
+												<p:commandButton
+													update="msgFotoRecortada , fotoDefinida , :frmEditUsuario:pnlFotoPerfil, :frmEditUsuario:, :frmEditUsuario:fotoPerfil"
+													action="#{usuarioController.salvarImagemRecortada}"
+													icon="fa fa-save" value="Salvar" />
+											</center>
+										</p:panel>
+
+									</div>
+								</div>
+							</div>
+							<p:fileUpload mode="advanced" auto="true"
+								update=":frmEditFotoPerfil"
+								fileUploadListener="#{usuarioController.salvarImagem}"
+								label="Buscar Imagem" />
+
+							<br />
+
+							<p:commandButton icon="fa fa-scissors"
+								update="@form , imgCropper, pnlImgCortar , msgFotoRecortada"
+								action="#{usuarioController.recortarImagem}" value="Cortar" />
+
+							<p:commandButton value="Capturar da Webcam" />
+
+
+							<p:commandButton oncomplete="PF('dlgFotoPerfilUsuario').hide();"
+								icon="fa fa-close" value="Fechar" />
+						</h:form>
+
+					</p:dialog>
+				</div>
+			</div>
+		</div>
+
+
+
+	</h:body>
+</f:view>
+
+</html>

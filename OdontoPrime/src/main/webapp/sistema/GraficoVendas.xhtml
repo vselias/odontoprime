@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+
+<ui:composition template="/template/Template.xhtml">
+
+	<ui:define name="content">
+
+		<h:form id="form">
+			<p:messages closable="true" />
+			<h3 style="text-align: right" class="tituloPagina">Gráfico de
+				Vendas por Data</h3>
+			<ui:include src="/template/MenuGraficoVendas.xhtml" />
+
+			<p:panelGrid styleClass="panelGrid semBorda" columns="3">
+
+				<h:outputText value="Ano: " />
+				<p:inputMask mask="9999" value="#{graficoVendaMB.ano}" />
+
+				<p:commandButton value="Buscar" icon="fa fa-search" ajax="false"
+					action="#{graficoVendaMB.criarModelo}">
+				</p:commandButton>
+
+				<h3>
+					<h:outputText rendered="#{graficoVendaMB.ano ne 0}"
+						id="totalVendas"
+						value="Total de vendas dos últimos 8 meses no ano: #{graficoVendaMB.ano}" />
+					<h:outputText rendered="#{graficoVendaMB.totalVenda ne 0}"
+						value="#{graficoVendaMB.totalVenda}">
+						<f:convertNumber pattern="R$ #,##0.00" />
+					</h:outputText>
+
+				</h3>
+			</p:panelGrid>
+
+		</h:form>
+
+		<h:form id="formGrafico">
+			<center>
+				<p:chart widgetVar="chart" id="grafico" type="bar"
+					model="#{graficoVendaMB.barModelo}"
+					style="height:200px; width:800px;" />
+				<p:commandButton style="margin:10px;" icon="fa fa-external-link"
+					rendered="#{graficoVendaMB.totalVenda ne 0}"
+					onclick="exportChart()" value="Exportar" />
+			</center>
+		</h:form>
+		<p:dialog widgetVar="dlg" showEffect="fade" modal="true"
+			header="Gráfico em formato de imagem." resizable="false">
+			<p:outputPanel id="botao" layout="block"
+				style="width:800px;height:300px" />
+		</p:dialog>
+
+		<script type="text/javascript">
+			function exportChart() {
+				    //export image
+				    $('#botao').empty().append(PF('chart').exportAsImage());
+				 
+				    //show the dialog
+				    PF('dlg').show();
+					}
+		</script>
+	</ui:define>
+
+</ui:composition>
+
+</html>

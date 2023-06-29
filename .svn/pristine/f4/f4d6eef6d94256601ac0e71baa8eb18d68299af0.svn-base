@@ -1,0 +1,161 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/template/Template.xhtml">
+
+	<ui:define name="content">
+
+
+
+		<h3 style="text-align: right" class="tituloPagina">Lista de Saída</h3>
+
+		<h:form id="frmSaida">
+
+			<ui:include src="/template/MenuPesquisaSaida.xhtml" />
+			<p:messages id="msg" closable="true" />
+			<center>
+				<p:dataTable widgetVar="tabela" styleClass="tabela" paginator="true"
+					rowKey="#{s.id}" selectionMode="single"
+					selection="#{saidaMB.saida}"
+					filteredValue="#{saidaMB.saidasFiltradas}"
+					rowsPerPageLabel="5,10,15" value="#{saidaMB.saidas}" id="tabela"
+					rows="5" emptyMessage="Nenhum registro." var="s">
+
+
+					<p:column sortBy="#{s.item}" filterBy="#{s.item}"
+						headerText="Paciente">
+						<f:facet name="header">
+							<h:outputText value="Item" />
+						</f:facet>
+						<p:outputLabel value="#{s.item}" />
+					</p:column>
+					<p:column sortBy="#{s.motivo}" filterBy="#{s.motivo}"
+						headerText="Motivo">
+						<f:facet name="header">
+							<h:outputText value="Motivo" />
+						</f:facet>
+						<p:outputLabel value="#{s.motivo}" />
+					</p:column>
+					<p:column sortBy="#{s.descricao}" filterBy="#{s.descricao}">
+						<f:facet name="header">
+							<h:outputText value="Descrição" />
+						</f:facet>
+
+						<p:outputLabel value="#{s.descricao}" />
+					</p:column>
+
+					<p:column sortBy="#{s.dataSaida}" filterBy="#{s.dataSaida}"
+						headerText="Data">
+						<f:facet name="header">
+							<h:outputText value="Data" />
+						</f:facet>
+						<p:outputLabel value="#{s.dataSaida}">
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"
+								timeZone="America/Sao_Paulo" />
+						</p:outputLabel>
+					</p:column>
+
+					<p:column sortBy="#{s.quantidade}" filterBy="#{s.quantidade}"
+						headerText="Valor">
+						<f:facet name="header">
+							<h:outputText value="Quantidade" />
+						</f:facet>
+						<p:outputLabel value="#{s.quantidade}" />
+					</p:column>
+
+					<p:column sortBy="#{s.valor}" filterBy="#{s.valor}"
+						headerText="Valor">
+						<f:facet name="header">
+							<h:outputText value="Valor" />
+						</f:facet>
+						<p:outputLabel value="#{s.valor}">
+							<f:convertNumber pattern="#,##0.00" locale="pt_BR" />
+						</p:outputLabel>
+					</p:column>
+					<p:column style="text-align:center;" headerText="Ações">
+
+						<p:button icon="fa fa-edit" outcome="Saida">
+							<f:param name="codigo" value="#{s.id}" />
+						</p:button>
+						<p:spacer width="10px;" />
+
+						<p:commandButton rendered="#{usuarioMB.usuario.adm}"
+							update="frmExclusao" oncomplete="PF('exclusao').show()"
+							icon="fa fa-trash">
+							<f:setPropertyActionListener value="#{s}"
+								target="#{saidaMB.saida}" />
+						</p:commandButton>
+						<p:spacer width="10px;" />
+
+						<p:commandButton icon="fa fa-info" update=":frmInfoCadastro"
+							oncomplete="PF('dlgInfoCadastro').show();">
+							<f:setPropertyActionListener value="#{s}"
+								target="#{saidaMB.saida}" />
+						</p:commandButton>
+
+					</p:column>
+				</p:dataTable>
+
+			</center>
+		</h:form>
+
+		<h:form id="frmExclusao">
+			<!-- 			confirm dialog para exclusao da consulta -->
+			<p:confirmDialog widgetVar="exclusao" severity="alert"
+				header="Confirmação exclusao saída"
+				message="Você deseja remover saída id: #{saidaMB.saida.id}?">
+
+
+				<p:outputLabel value="Descrição:" />
+				<p:outputLabel value="#{saidaMB.saida.descricao}" />
+				<br />
+				<br />
+
+				<p:outputLabel value="Item:" />
+				<p:outputLabel value="#{saidaMB.saida.item}" />
+				<br />
+
+				<p:commandButton update=":frmSaida:tabela ,  :frmSaida:msg"
+					value="Sim" oncomplete="PF('exclusao').hide()"
+					action="#{saidaMB.remover}" />
+
+				<p:commandButton value="Não" oncomplete="PF('exclusao').hide()" />
+			</p:confirmDialog>
+		</h:form>
+
+
+
+
+
+
+		<p:dialog header="Detalhes do cadastro de saída" modal="true"
+			closable="true" resizable="false" closeOnEscape="true"
+			widgetVar="dlgInfoCadastro">
+			<h:form id="frmInfoCadastro">
+				<p:panelGrid columns="2">
+					<p:outputLabel value="Usuário:" />
+					<p:outputLabel value="#{saidaMB.saida.usuario.login}" />
+
+					<p:outputLabel value="Status:" />
+					<p:outputLabel value="#{saidaMB.saida.statusCadastro.descricao}" />
+
+					<p:outputLabel value="Data cadastro:" />
+					<p:outputLabel value="#{saidaMB.saida.dataCadastro}">
+						<f:convertDateTime timeZone="America/Sao_Paulo"
+							pattern="dd/MM/yyyy HH:mm:ss" locale="pt_BR" />
+					</p:outputLabel>
+				</p:panelGrid>
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+
+</ui:composition>
+</html>

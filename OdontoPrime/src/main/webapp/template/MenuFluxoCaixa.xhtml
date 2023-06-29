@@ -1,0 +1,17 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:toolbar>
+		<p:toolbarGroup>
+			<p:commandButton actionListener="#{movimentacaoCaixaMB.salvar}"
+				update="frmAbertura msg" icon="fa fa-floppy-o" value="Salvar" />
+		</p:toolbarGroup>
+		<p:toolbarGroup align="right">
+			<p:button value="Pesquisa" icon="fa fa-search"
+				outcome="PesquisaFluxoCaixa" />
+		</p:toolbarGroup>
+	</p:toolbar>
+</ui:composition>

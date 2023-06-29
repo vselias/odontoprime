@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+<!-- 
+		Replace path to template, title, header and body
+		with actual data.
+	 -->
+<ui:composition template="/template/Template.xhtml">
+	<ui:define name="content">
+
+
+		<h:form id="frmFechamento">
+			<h3 class="tituloPagina">#{movimentacaoCaixaMB.movimentacaoCaixa.id
+				eq null ?'Fechamento de Caixa': 'Editar Fechamento'}</h3>
+
+			<ui:include src="/template/MenuFechamentoCaixa.xhtml" />
+
+			<p:messages id="msg" showDetail="false" redisplay="false"
+				closable="true" />
+
+			<p:spacer height="10" />
+
+
+			<div class="ui-grid-responsive">
+
+				<div class="ui-grid-row">
+
+
+					<div class="ui-grid-col-12">
+
+						<p:panelGrid columns="2">
+							<p:outputLabel value="Valor inicial do caixa:" />
+							<p:inputText
+								value="#{movimentacaoCaixaMB.movimentacaoCaixa.valorInicial}">
+								<f:convertNumber maxFractionDigits="2" minFractionDigits="2" />
+							</p:inputText>
+							<p:outputLabel value="Status" />
+							<p:selectOneMenu
+								value="#{movimentacaoCaixaMB.movimentacaoCaixa.tipoMovimentacao}">
+								<f:selectItems value="#{movimentacaoCaixaMB.tiposMovimentacao}"
+									var="tipo" itemLabel="#{tipo.descricao}" itemValue="#{tipo}" />
+							</p:selectOneMenu>
+
+						</p:panelGrid>
+						<p:spacer height="30" />
+						<p:panel style="text-align:center;"
+							header="Fechamento do caixa atual">
+							<center>
+								<p:panelGrid layout="grid"
+									columnClasses="ui-grid-col-4,ui-grid-col-8" columns="2">
+
+									<p:outputLabel value="Usuário" />
+									<p:outputLabel
+										value="#{movimentacaoCaixaMB.movimentacaoCaixa.usuario.login}" />
+
+									<p:outputLabel value="Data" />
+									<p:outputLabel
+										value="#{movimentacaoCaixaMB.movimentacaoCaixa.data}">
+										<f:convertDateTime locale="pt_BR" timeZone="America/Sao_Paulo"
+											pattern="dd/MM/yyyy" />
+									</p:outputLabel>
+
+									<p:outputLabel style="font-weight:bold;" value="Valor inicial " />
+									<p:outputLabel style="font-weight:bold;"
+										value="#{movimentacaoCaixaMB.movimentacaoCaixa.valorInicial}">
+										<f:convertNumber pattern="+ R$ #,##0.00" />
+									</p:outputLabel>
+
+									<p:outputLabel style="font-weight:bold;" value="Entrada " />
+									<p:outputLabel style="font-weight:bold;"
+										value="#{movimentacaoCaixaMB.movimentacaoCaixa.entrada}">
+										<f:convertNumber pattern="+ R$ #,##0.00" />
+									</p:outputLabel>
+
+
+									<p:outputLabel style="font-weight:bold;" value="Saída" />
+									<p:outputLabel style="font-weight:bold;"
+										value="#{movimentacaoCaixaMB.movimentacaoCaixa.saida}">
+										<f:convertNumber pattern="- R$ #,##0.00" />
+									</p:outputLabel>
+
+
+									<p:outputLabel style="font-weight:bold;" value="Total" />
+									<p:outputLabel style="font-weight:bold;"
+										value="#{movimentacaoCaixaMB.movimentacaoCaixa.valorTotal}">
+										<f:convertNumber pattern=" R$ #,##0.00" />
+									</p:outputLabel>
+
+									<p:outputLabel value="Consultas realizadas" />
+									<p:commandLink update=":frmDetalheFechamento"
+										action="#{movimentacaoCaixaMB.buscarConsultasFechamento}"
+										oncomplete="PF('dlgDetalheFechamento').show()"
+										value="Visualizar consultas" />
+
+								</p:panelGrid>
+
+							</center>
+
+						</p:panel>
+					</div>
+				</div>
+			</div>
+		</h:form>
+
+
+
+		<!-- dialog para exibir as consultas do fechamento atual -->
+		<p:dialog header="Consulta(s) paga(s) / Saída(s) efetuada(s) hoje." resizable="false" closeOnEscape="true" closable="true"
+			responsive="true" modal="true" widgetVar="dlgDetalheFechamento">
+
+			<ui:include src="/sistema/adm/ListaConsultaFechamento.xhtml" />
+
+		</p:dialog>
+
+
+		<!-- dialog detalhamento das parcelas -->
+		<p:dialog header="Parcela(s) paga(s) hoje." widgetVar="dlgExbParcela"
+			modal="true" appendTo="@(body)" resizable="false" responsive="true">
+			
+			
+			<ui:include src="/sistema/adm/ListaParcelaFechamento.xhtml" />
+		
+		</p:dialog>
+
+		
+		
+		
+		
+		
+		
+		
+		
+		<!-- dialog confirmação do fechamento de caixa -->
+		<h:form>
+			<p:confirmDialog widgetVar="dlgConfPagamento"
+				header="Confirmar fechamento de caixa?"
+				message="Deseja efetuar o registro?">
+				<p:commandButton update=":frmFechamento :frmFechamento:msg"
+					actionListener="#{movimentacaoCaixaMB.salvar}" icon="fa fa-check"
+					oncomplete="PF('dlgConfPagamento').hide()" value="Sim" />
+				<p:commandButton icon="fa fa-close" value="Fechar"
+					oncomplete="PF('dlgConfPagamento').hide()" />
+			</p:confirmDialog>
+		</h:form>
+
+
+
+
+
+
+
+	</ui:define>
+
+</ui:composition>
+
+</html>

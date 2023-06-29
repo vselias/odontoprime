@@ -1,0 +1,17 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:toolbar style="marin" id="idToolbar">
+		<p:toolbarGroup align="right">
+			<p:separator />
+			<p:button value="Pesquisa" icon="ui-icon-search"
+				outcome="PesquisaConsulta.xhtml" />
+		</p:toolbarGroup>
+	</p:toolbar>
+
+
+
+</ui:composition>

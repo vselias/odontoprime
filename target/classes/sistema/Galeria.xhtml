@@ -1,0 +1,203 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+<ui:composition template="/template/Template.xhtml">
+
+	<ui:define name="content">
+
+		<script>
+			function getIdImage(botao) {
+
+				var idImage = botao.getAttribute("alt");
+				console.log("id da imagem é:" + idImage);
+
+				setarIdImagem([ {
+					name : "idImagem",
+					value : idImage
+				} ])
+
+			}
+		</script>
+
+		<h3 class="tituloPagina" style="text-align: right">
+			<h:outputText value="Galeria" />
+		</h3>
+
+		<h:form>
+
+			<ui:include src="/template/MenuGaleria.xhtml" />
+			<center>
+
+				<p:dataTable tableStyle="width:auto" resizableColumns="true"
+					value="#{galeriaMB.pacientes}" paginatorPosition="top" var="p"
+					paginator="true" rowsPerPageTemplate="5,10,15" rows="5"
+					id="tblPacientes">
+
+					<p:column style="text-align:center;" headerText="Foto">
+
+						<p:graphicImage cache="false" width="100" height="100"
+							rendered="#{p.nomeImagem eq null or p.nomeImagem eq ''}"
+							value="/img/new-user.png" />
+
+						<p:graphicImage cache="false" width="100" height="100"
+							rendered="#{p.nomeImagem ne null}"
+							value="/imagens/#{p.nomeImagem}" />
+					</p:column>
+
+					<p:column sortBy="#{p.nome}" filterBy="#{p.nome}" headerText="Nome">
+						<p:outputLabel value="#{p.nome}" />
+
+					</p:column>
+
+					<p:column sortBy="#{p.cpf}" filterBy="#{p.cpf}" headerText="CPF">
+						<p:outputLabel value="#{p.cpf}" />
+
+					</p:column>
+					<p:column filterBy="#{p.dataNascimento}"
+						sortBy="#{p.dataNascimento}" headerText="Data de Nascimento">
+						<p:outputLabel value="#{p.dataNascimento}">
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</p:outputLabel>
+						<p:outputLabel rendered="#{p.dataNascimento eq null}"
+							value="Não informado." />
+
+					</p:column>
+
+					<p:column sortBy="#{p.email}" filterBy="#{p.email}"
+						headerText="e-Mail">
+						<p:outputLabel value="#{p.email}" />
+						<p:outputLabel rendered="#{p.email eq ''}" value="Não informado." />
+
+					</p:column>
+					<p:column sortBy="#{p.sexo}" filterBy="#{p.sexo}" headerText="Sexo">
+						<p:outputLabel value="#{p.sexo}" />
+
+					</p:column>
+
+					<p:column headerText="Ações">
+						<p:commandButton update=":frmUploadFoto"
+							oncomplete="PF('dlgGaleriaImg').show();" icon="fa fa-plus">
+							<f:setPropertyActionListener value="#{p}"
+								target="#{galeriaMB.paciente}" />
+						</p:commandButton>
+						<p:spacer width="5px;" />
+
+						<p:commandButton update=":frmExbFoto"
+							action="#{galeriaMB.selecionarPaciente(p)}"
+							icon="fa fa-camera-retro">
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+			</center>
+
+		</h:form>
+		<p:spacer height="20px" />
+		<center>
+
+
+			<h:form id="frmExbFoto">
+				<p:accordionPanel id="accordion">
+					<p:tab title="Galeria de imagens do paciente">
+
+						<p:outputLabel rendered="#{galeriaMB.paciente.id gt 0}"
+							value="Paciente:" />
+
+						<p:outputLabel id="paciente"
+							rendered="#{galeriaMB.paciente.id gt 0}"
+							value="#{galeriaMB.paciente.nome}" />
+						<br />
+						<br />
+
+						<p:outputLabel rendered="#{galeriaMB.paciente.id gt 0}"
+							value="CPF:" />
+
+						<p:outputLabel rendered="#{galeriaMB.paciente.id gt 0}"
+							value="#{galeriaMB.paciente.cpf}" />
+						<br />
+						<br />
+
+						<p:outputLabel
+							rendered="#{empty galeriaMB.paciente.fotos and galeriaMB.paciente.id gt 0}"
+							value="Paciente não possui foto." />
+						<p:remoteCommand name="setarIdImagem" process="@this"
+							actionListener="#{galeriaMB.setarIdImagem}" />
+
+						<p:galleria rendered="#{not empty galeriaMB.paciente.fotos}"
+							frameWidth="100" frameHeight="70" panelWidth="800"
+							panelHeight="550" showCaption="true" autoPlay="false"
+							id="galeria" var="foto" value="#{galeriaMB.paciente.fotos}">
+							<p:outputPanel>
+								<h:form>
+									<p:commandButton oncomplete="PF('dlgDelFoto').show()"
+										alt="#{foto.id}" onclick="getIdImage(this)" icon="fa fa-trash">
+									</p:commandButton>
+
+								</h:form>
+							</p:outputPanel>
+
+							<p:graphicImage cache="false" style="margin-top: 5px;"
+								width="100%" height="100%" alt="Descrição #{foto.descricao}"
+								title="#{foto.album}" value="/galeria/#{foto.id}" />
+
+						</p:galleria>
+					</p:tab>
+				</p:accordionPanel>
+			</h:form>
+		</center>
+		<p:confirmDialog width="400" height="25" appendTo="@(body)"
+			message="Deseja excluir a foto?" widgetVar="dlgDelFoto">
+			<h:form>
+				<div style="text-align: center;">
+					<p:commandButton oncomplete="PF('dlgDelFoto').hide();"
+						update=":frmExbFoto:accordion:galeria :frmExbFoto :formGlobal:msgGlobal"
+						action="#{galeriaMB.removerFoto}" value="Excluir" />
+					<p:commandButton oncomplete="PF('dlgDelFoto').hide();"
+						value="Cancelar" />
+				</div>
+			</h:form>
+		</p:confirmDialog>
+		<p:dialog appendTo="@(body)" dynamic="true"
+			header="Adicionar foto na galeria" resizable="false"
+			widgetVar="dlgGaleriaImg" modal="true" closeOnEscape="true"
+			closable="true">
+			<h:form id="frmUploadFoto">
+				<p:fileUpload cancelLabel="Cancelar" label="Escolha Imagem"
+					uploadLabel="Enviar"
+					invalidSizeMessage="Imagem precisa ter até 1MB."
+					invalidFileMessage="Apenas formatos gif, png e jpg."
+					sizeLimit="1000000" allowTypes="/(\.|\/)(gif|jpe?g|png)$/"
+					update=":formGlobal:msgGlobal"
+					fileUploadListener="#{galeriaMB.inserirFotoGaleria}" />
+
+				<h:panelGrid cellpadding="10" columns="2">
+
+					<p:outputLabel value="Paciente:" />
+					<p:inputText readonly="true" value="#{galeriaMB.paciente.nome}" />
+
+					<p:outputLabel value="CPF:" />
+					<p:inputText readonly="true" value="#{galeriaMB.paciente.cpf}" />
+
+					<p:outputLabel value="Album" />
+					<p:inputText value="#{galeriaMB.foto.album}" />
+
+					<p:outputLabel value="Descrição" />
+					<p:inputText value="#{galeriaMB.foto.descricao}" />
+
+
+					<p:commandButton
+						update=":formGlobal:msgGlobal :frmExbFoto  :frmExbFoto:accordion:galeria"
+						action="#{galeriaMB.salvarGaleriaPaciente}" value="Adicionar" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+
+</ui:composition>
+
+
+</html>

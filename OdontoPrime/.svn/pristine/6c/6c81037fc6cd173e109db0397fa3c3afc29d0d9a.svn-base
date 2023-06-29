@@ -1,0 +1,319 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+<f:view>
+	<h:head>
+		<ui:insert name="title">
+			<title>Odonto Prime</title>
+		</ui:insert>
+		<f:facet name="last">
+			<meta content='text/html; charset=UTF-8' http-equiv="Content-Type" />
+			<title>Test</title>
+		</f:facet>
+	
+	
+		<script type="text/javascript"
+			src="#{request.contextPath}/js/calendario_pt_BR.js" />
+	
+		<link href="#{request.contextPath}/css/estilo.css" rel="stylesheet"
+			type="text/css" />
+
+
+		<h:outputScript name="jquery/jquery-plugins.js" library="primefaces" />
+		<h:outputStylesheet name="grid/grid.css" library="primefaces" />
+
+		<h:outputScript name="charts/charts.js" library="primefaces" />
+		<h:outputStylesheet name="charts/charts.css" library="primefaces" />
+
+		<style>
+body {
+	background-image: url("#{request.contextPath}/img/macback.png");
+}
+</style>
+	</h:head>
+</f:view>
+
+
+
+<f:view contentType="text/html">
+	<h:body id="body">
+
+		<div class="ui-grid-responsive">
+			<div class="ui-grid-row">
+				<div class="ui-grid-col-12">
+					<div id="header" class="barra-logo ">
+						<div class="ui-grid-row">
+							<div class="ui-grid-col-2">
+								<h:form>
+									<p:commandLink action="/sistema/Inicio?faces-redirect=true">
+										<h:graphicImage styleClass="imgLogo"
+											value="/img/logo-login.png" />
+									</p:commandLink>
+								</h:form>
+							</div>
+
+							<div style="text-align: right;" class="ui-grid-col-10">
+
+								<div class="ui-grid-row">
+
+									<div class="ui-grid-col-10">
+										<h:form id="frmImgUsuario">
+											<p:graphicImage styleClass="imgUsuario"
+												rendered="#{usuarioMB.usuario.nomeImagem eq null or usuarioMB.usuario.nomeImagem eq ''}"
+												width="100px" height="100px" value="/img/new-user.png" />
+
+											<p:graphicImage id="fotoDefinida" styleClass="imgUsuario"
+												rendered="#{usuarioMB.usuario.nomeImagem ne null and usuarioMB.usuario.nomeImagem ne ''}"
+												width="100px" height="100px" cache="false"
+												value="/imagens/#{usuarioMB.usuario.nomeImagem}" />
+										</h:form>
+									</div>
+
+									<div class="ui-grid-col-2 divUsuario">
+
+										<p:outputLabel styleClass="estiloFonteUsuario"
+											value="Usuário: " />
+										<p:outputLabel styleClass="estiloFonteUsuario"
+											value="#{usuarioMB.usuario.login}" />
+										<br />
+										<p:outputLabel styleClass="estiloFonteUsuario" value="Nível: " />
+										<p:outputLabel styleClass="estiloFonteUsuario"
+											rendered="#{usuarioMB.usuario.adm}" value="Administrador" />
+										<p:outputLabel styleClass="estiloFonteUsuario"
+											rendered="#{not usuarioMB.usuario.adm}" value="Usuário" />
+										<br />
+
+										<p:commandLink styleClass="estiloFonteUsuario"
+											update=":frmEditFotoPerfil"
+											action="#{usuarioMB.limparImagemCropper}"
+											oncomplete="PF('dlgFotoPerfilUsuario').show();"
+											value="Alterar Imagem" />
+										<br />
+										<p:outputLabel styleClass="estiloFonteUsuario"
+											value="Ultimo acesso em:" />
+										<br />
+										<p:outputLabel styleClass="estiloFonteUsuario"
+											value="#{usuarioMB.usuario.exibirDataUltimoLogin}">
+											<f:convertDateTime locale="pt_BR"
+												timeZone="America/Sao_Paulo" pattern="dd/MM/yyyy HH:mm:ss" />
+										</p:outputLabel>
+
+										<p:confirmDialog widgetVar="confirmarSaida"
+											header="Finalizando..."
+											message="Deseja realmente sair do sistema?">
+
+											<p:commandButton oncomplete="PF('confirmarSaida').hide()"
+												action="#{usuarioMB.registrarSaida}" value="Sim" />
+
+											<p:commandButton onclick="PF('confirmarSaida').hide()"
+												value="Não" />
+
+										</p:confirmDialog>
+									</div>
+								</div>
+
+							</div>
+						</div>
+
+						<h:form>
+							<h:panelGroup rendered="#{usuarioMB.usuario.adm}">
+								<ui:include src="/template/MenuAdm.xhtml" />
+							</h:panelGroup>
+							<h:panelGroup rendered="#{not usuarioMB.usuario.adm}">
+								<ui:include src="/template/MenuNormal.xhtml" />
+							</h:panelGroup>
+						</h:form>
+
+						<ui:insert name="header" />
+
+					</div>
+
+
+					<p:spacer height="10" />
+
+					<div id="content">
+
+						<p:spacer height="5px;" />
+
+						<div class="ui-grid-responsive">
+							<div class="ui-grid-row">
+								<div class="ui-grid-col-10">
+
+									<p:spacer></p:spacer>
+
+								</div>
+
+								<div class="ui-grid-col-2">
+									<h:form>
+										<p:themeSwitcher style="width:150px;"
+											value="#{configuracoesForm.meuTema}">
+											<f:selectItems value="#{configuracoesForm.themes}" />
+											<p:ajax global="false"
+												listener="#{configuracoesForm.salvarTema}" />
+										</p:themeSwitcher>
+									</h:form>
+								</div>
+							</div>
+
+						</div>
+
+
+						<h:form id="formGlobal">
+
+							<p:growl id="msgGlobal" autoUpdate="false" sticky="false"
+								showDetail="false" />
+						</h:form>
+
+
+
+
+						<hr />
+						<ui:insert name="content" />
+
+					</div>
+					<hr />
+
+					<div class="footer">
+						<div class="ui-grid-responsive">
+
+							<div class="ui-grid-row">
+
+								<div class="ui-grid-col-2">
+
+									<p:graphicImage styleClass="imgFooter" width="150px"
+										height="75px" value="/img/logo-login.png" />
+
+								</div>
+								<div class="ui-grid-col-10">
+									<h:form>
+
+
+										<h4 class="tituloFooter">Links:</h4>
+										<ul class="tituloFooter">
+											<li><h:outputLink styleClass="tituloFooter"
+													target="_blank"
+													value="http://cursos.marketingemodontologia.com.br/">Marketing Odonto</h:outputLink>
+											</li>
+											<li><h:outputLink styleClass="tituloFooter"
+													value="http://www.odontosites.com.br/odonto/"
+													target="_bank">
+													Odonto Sites
+													</h:outputLink></li>
+											<li><h:outputLink styleClass="tituloFooter"
+													target="_blank"
+													value="http://www.livrariaodontosites.com.br/">
+													Livraria Odonto</h:outputLink></li>
+											<li><h:outputLink target="_blank"
+													styleClass="tituloFooter"
+													value="http://www.jornaldosite.com.br/">
+													Jornal Odonto</h:outputLink></li>
+											<li><h:outputLink target="_blank"
+													styleClass="tituloFooter"
+													value="http://www.abo.org.br/site/#/">
+													Assosiação Brasileira de Odontologia</h:outputLink></li>
+										</ul>
+									</h:form>
+									<br />
+									<h5 class="tituloFooter" style="text-align: center">
+										Sistema de gerenciamento odontológico - OdontoPrime todos
+										direitos reservados ®.</h5>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+
+		</div>
+
+
+
+
+		<p:dialog header="Insira foto do usuário" dynamic="true"
+			closeOnEscape="false" closable="false" resizable="false"
+			responsive="true" modal="true" draggable="false" appendTo="@(body)"
+			widgetVar="dlgFotoPerfilUsuario">
+
+
+			<h:form id="frmEditFotoPerfil">
+				<p:fileUpload mode="advanced" auto="true"
+					update="pnlFotoEditar , :formGlobal:msgGlobal" sizeLimit="1000000"
+					invalidSizeMessage="Imagem no máximo 1MB." fileLimit="1"
+					fileLimitMessage="Apenas uma imagem por vez."
+					invalidFileMessage="Enviar apenas imagem."
+					allowTypes="/(\.|\/)(jpe?g|png)$/"
+					fileUploadListener="#{usuarioMB.salvarImagem}"
+					label="Buscar Imagem" />
+
+				<h:panelGrid columns="2">
+					<p:panel style="overflow:scroll; width:600px; height:400px;"
+						header="Foto normal" id="pnlFotoEditar">
+						<p:graphicImage id="imgEditDefault" cache="false"
+							rendered="#{not usuarioMB.exibirImagemCropper}"
+							value="/img/new-user.png" />
+
+						<p:imageCropper id="imgCropper" minSize="100,100"
+							maxSize="200,200" rendered="#{usuarioMB.exibirImagemCropper}"
+							value="#{usuarioMB.croppedImage}"
+							image="/temp/imagens/#{usuarioMB.usuario.nomeImagemCropper}" />
+					</p:panel>
+					<p:panel header="Foto recortada" id="pnlImgCortar">
+						<center>
+							<p:graphicImage rendered="#{not usuarioMB.exibirImagemRecortada}"
+								value="/img/new-user.png" cache="false" />
+							<p:graphicImage id="imgRecortada" cache="false"
+								rendered="#{usuarioMB.exibirImagemRecortada}"
+								value="/temp/imagens/#{usuarioMB.usuario.nomeImagemRecortada}" />
+
+
+						</center>
+					</p:panel>
+				</h:panelGrid>
+
+				<p:spacer height="5px;" />
+
+				<p:panelGrid layout="grid"
+					columnClasses="ui-grid-col-3,ui-grid-col-3,ui-grid-col-3,ui-grid-col-3"
+					styleClass="ui-panelgrid-blank" columns="4">
+					<p:commandButton icon="fa fa-scissors"
+						update="pnlImgCortar , :formGlobal:msgGlobal"
+						action="#{usuarioMB.recortarImagem}" value="Cortar" />
+
+					<p:commandButton icon="fa fa-video-camera"
+						action="#{cadastroUsuarioMB.ativarWebCam}"
+						oncomplete="PF('dlgTirarFotoUsuario').show();"
+						update=":frmTirarFotoUsuario" value="Webcam" />
+
+					<p:commandButton
+						update=":frmImgUsuario , :frmImgUsuario:fotoDefinida, :formGlobal:msgGlobal"
+						action="#{usuarioMB.salvarImagemRecortada}" icon="fa fa-save"
+						value="Salvar" />
+					<p:commandButton oncomplete="PF('dlgFotoPerfilUsuario').hide();"
+						icon="fa fa-close" value="Fechar" />
+				</p:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgTirarFotoUsuario">
+			<h:form id="frmTirarFotoUsuario">
+				<p:photoCam widgetVar="pc" listener="#{usuarioMB.tirarFoto}"
+					update=":frmEditFotoPerfil:pnlFotoEditar, :formGlobal:msgGlobal"
+					rendered="#{cadastroUsuarioMB.exibirWebCam}" />
+				<p:panelGrid columns="2">
+					<p:commandButton icon="fa fa-camera" onclick="PF('pc').capture();"
+						value="Tirar foto" />
+					<p:commandButton update="frmTirarFotoUsuario" icon="fa fa-close"
+						oncomplete="PF('dlgTirarFotoUsuario').hide();" value="Fechar" />
+				</p:panelGrid>
+			</h:form>
+		</p:dialog>
+
+	</h:body>
+</f:view>
+
+</html>

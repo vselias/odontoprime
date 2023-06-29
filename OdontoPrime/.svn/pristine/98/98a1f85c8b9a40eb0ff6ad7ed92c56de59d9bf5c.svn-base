@@ -1,0 +1,348 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+<!-- 
+		Replace path to template, title, header and body
+		with actual data.
+	 -->
+<ui:composition template="/template/Template.xhtml">
+	<ui:define name="content">
+
+
+		<h:form id="frmFechamento">
+			<h3 class="tituloPagina">#{movimentacaoCaixaMB.movimentacaoCaixa.id
+				eq null ?'Fechamento de Caixa': 'Editar Fechamento'}</h3>
+
+			<ui:include src="/template/MenuFechamentoCaixa.xhtml" />
+
+			<p:messages id="msg" showDetail="false" redisplay="false"
+				closable="true" />
+
+			<p:spacer height="10" />
+
+
+			<div class="ui-grid-responsive">
+
+				<div class="ui-grid-row">
+
+
+					<div class="ui-grid-col-12">
+
+						<p:panelGrid columns="2">
+							<p:outputLabel value="Valor inicial do caixa:" />
+							<p:inputText
+								value="#{movimentacaoCaixaMB.movimentacaoCaixa.valorInicial}">
+								<f:convertNumber maxFractionDigits="2" minFractionDigits="2" />
+							</p:inputText>
+							<p:outputLabel value="Status" />
+							<p:selectOneMenu
+								value="#{movimentacaoCaixaMB.movimentacaoCaixa.tipoMovimentacao}">
+								<f:selectItems value="#{movimentacaoCaixaMB.tiposMovimentacao}"
+									var="tipo" itemLabel="#{tipo.descricao}" itemValue="#{tipo}" />
+							</p:selectOneMenu>
+
+						</p:panelGrid>
+						<p:spacer height="30" />
+						<p:panel style="text-align:center;"
+							header="Fechamento caixa atual">
+							<center>
+								<p:panelGrid layout="grid"
+									columnClasses="ui-grid-col-4,ui-grid-col-8" columns="2">
+
+									<p:outputLabel value="Usuário" />
+									<p:outputLabel
+										value="#{movimentacaoCaixaMB.movimentacaoCaixa.usuario.login}" />
+
+									<p:outputLabel value="Data" />
+									<p:outputLabel
+										value="#{movimentacaoCaixaMB.movimentacaoCaixa.data}">
+										<f:convertDateTime locale="pt_BR" timeZone="America/Sao_Paulo"
+											pattern="dd/MM/yyyy" />
+									</p:outputLabel>
+
+									<p:outputLabel style="font-weight:bold;" value="Valor inicial " />
+									<p:outputLabel style="font-weight:bold;"
+										value="#{movimentacaoCaixaMB.movimentacaoCaixa.valorInicial}">
+										<f:convertNumber pattern="+ R$ #,##0.00" />
+									</p:outputLabel>
+
+									<p:outputLabel style="font-weight:bold;" value="Entrada " />
+									<p:outputLabel style="font-weight:bold;"
+										value="#{movimentacaoCaixaMB.movimentacaoCaixa.entrada}">
+										<f:convertNumber pattern="+ R$ #,##0.00" />
+									</p:outputLabel>
+
+
+									<p:outputLabel style="font-weight:bold;" value="Saída" />
+									<p:outputLabel style="font-weight:bold;"
+										value="#{movimentacaoCaixaMB.movimentacaoCaixa.saida}">
+										<f:convertNumber pattern="- R$ #,##0.00" />
+									</p:outputLabel>
+
+
+									<p:outputLabel style="font-weight:bold;" value="Total" />
+									<p:outputLabel style="font-weight:bold;"
+										value="#{movimentacaoCaixaMB.movimentacaoCaixa.valorTotal}">
+										<f:convertNumber pattern=" R$ #,##0.00" />
+									</p:outputLabel>
+
+									<p:outputLabel value="Consultas realizadas" />
+									<p:commandLink update=":frmDetalheFechamento"
+										action="#{movimentacaoCaixaMB.buscarConsultasFechamento}"
+										onclick="PF('dlgDetalheFechamento').show()"
+										value="Visualizar consultas" />
+
+								</p:panelGrid>
+
+							</center>
+
+						</p:panel>
+					</div>
+				</div>
+			</div>
+		</h:form>
+
+
+		<p:dialog resizable="false" closeOnEscape="true" closable="true"
+			responsive="true" modal="true" widgetVar="dlgDetalheFechamento">
+
+
+
+			<h:form id="frmDetalheFechamento">
+
+				<h3>Entradas referente ao fechamento atual</h3>
+
+				<p:dataTable widgetVar="tblConsulta" styleClass="tabela"
+					paginator="true" rowsPerPageTemplate="5,10,15" reflow="true"
+					rowKey="#{c.id}" selectionMode="single"
+					selection="#{consultaMB.consulta}"
+					value="#{movimentacaoCaixaMB.consultasFechamento}" id="tblConsulta"
+					var="c" rows="5" paginatorPosition="top"
+					emptyMessage="Nenhum registro.">
+
+
+					<p:column style="text-align:center;" headerText="Foto">
+						<p:graphicImage cache="false" width="80px;" height="80px;"
+							rendered="#{c.paciente.nomeImagem eq null or c.paciente.nomeImagem eq ''}"
+							value="/img/new-user.png" />
+						<p:graphicImage cache="false" width="80px;" height="80px;"
+							rendered="#{c.paciente.nomeImagem ne null and c.paciente.nomeImagem ne ''}"
+							value="/imagens/#{c.paciente.nomeImagem}" />
+					</p:column>
+
+
+					<p:column filterBy="#{c.paciente.nome}" sortBy="#{c.paciente.nome}"
+						headerText="Paciente">
+						<p:outputLabel value="#{c.paciente.nome}" />
+					</p:column>
+
+
+					<p:column headerText="Consulta" filterBy="#{c.tipoConsulta}"
+						sortBy="#{c.tipoConsulta}">
+						<p:outputLabel value="#{c.tipoConsulta.descricao}" />
+
+					</p:column>
+
+					<p:column filterMatchMode="startsWith" filterBy="#{c.dataConsulta}"
+						sortBy="#{c.dataConsulta}" headerText="Data">
+						<p:outputLabel value="#{c.dataConsulta}">
+							<f:convertDateTime timeZone="America/Sao_Paulo"
+								pattern="dd/MM/yyyy HH:mm:ss" locale="pt_BR" />
+						</p:outputLabel>
+					</p:column>
+
+					<p:column sortBy="#{c.estadoConsulta.descricao}"
+						filterBy="#{c.estadoConsulta.descricao}" headerText="Estado">
+
+						<p:outputLabel value="#{c.estadoConsulta.descricao}" />
+					</p:column>
+					<p:column filterBy="#{c.entrada.valor}" sortBy="#{c.entrada.valor}"
+						headerText="Valor">
+						<p:outputLabel value="#{c.entrada.valor}">
+							<f:convertNumber pattern="R$ #,##0.00" />
+						</p:outputLabel>
+						<p:outputLabel rendered="#{c.entrada.valor eq null}"
+							value="R$ 0,00" />
+					</p:column>
+					<p:column filterBy="#{c.entrada.desconto}"
+						sortBy="#{c.entrada.desconto}" headerText="Desconto">
+						<p:outputLabel rendered="#{c.entrada.desconto ne null}"
+							value="#{c.entrada.desconto}%" />
+						<p:outputLabel rendered="#{c.entrada.desconto eq null}" value="0" />
+					</p:column>
+
+					<p:column filterBy="#{c.entrada.valorComDesconto}"
+						sortBy="#{c.entrada.valorComDesconto}" headerText="Total">
+
+						<p:outputLabel value="#{c.entrada.valorComDesconto}">
+							<f:convertNumber pattern="R$ #,##0.00" />
+						</p:outputLabel>
+
+						<p:outputLabel rendered="#{c.entrada.valorComDesconto eq null}"
+							value="R$ 0,00" />
+					</p:column>
+
+					<p:column>
+						<p:commandButton oncomplete="PF('dlgExbParcela').show();"
+							update=":frmExbParcela"
+							action="#{movimentacaoCaixaMB.buscarEntradaComParcela(c.entrada)}"
+							value="Ver parcelas" />
+
+					</p:column>
+					<f:facet name="footer">
+						<p:outputLabel style="text-align:right"
+							value="#{movimentacaoCaixaMB.movimentacaoCaixa.entrada}">
+							<f:convertNumber pattern="Total + R$ #,##0.00" locale="pt_BR" />
+						</p:outputLabel>
+					</f:facet>
+				</p:dataTable>
+
+				<h3>Saídas referente ao fechamento atual</h3>
+
+				<p:dataTable widgetVar="tabela" styleClass="tabela" paginator="true"
+					rowsPerPageLabel="5,10,15" rowKey="#{s.id}"
+					selection="#{movimentacaoCaixaMB.selecaoSaidaFechamento}"
+					selectionMode="single"
+					value="#{movimentacaoCaixaMB.saidasFechamento}" id="tabela"
+					rows="5" emptyMessage="Nenhum registro." var="s">
+
+					<p:column style="text-align:center;" sortBy="#{s.item}"
+						filterBy="#{s.item}">
+						<f:facet name="header">
+							<h:outputText value="Usuario" />
+						</f:facet>
+						<p:graphicImage
+							rendered="#{s.usuario eq null or s.usuario.nomeImagem eq null}"
+							cache="false" width="100px" height="100px"
+							value="/img/new-user.png" />
+						<p:graphicImage
+							rendered="#{s.usuario ne null and s.usuario.nomeImagem ne null}"
+							cache="false" width="100px" height="100px"
+							value="/imagens/#{s.usuario.nomeImagem}" />
+					</p:column>
+
+					<p:column sortBy="#{s.item}" filterBy="#{s.item}"
+						headerText="Paciente">
+						<f:facet name="header">
+							<h:outputText value="Item" />
+						</f:facet>
+						<p:outputLabel value="#{s.item}" />
+					</p:column>
+					<p:column sortBy="#{s.motivo}" filterBy="#{s.motivo}"
+						headerText="Motivo">
+						<f:facet name="header">
+							<h:outputText value="Motivo" />
+						</f:facet>
+						<p:outputLabel value="#{s.motivo}" />
+					</p:column>
+					<p:column sortBy="#{s.descricao}" filterBy="#{s.descricao}">
+						<f:facet name="header">
+							<h:outputText value="Descrição" />
+						</f:facet>
+
+						<p:outputLabel value="#{s.descricao}" />
+					</p:column>
+
+					<p:column sortBy="#{s.dataSaida}" filterBy="#{s.dataSaida}"
+						headerText="Data">
+						<f:facet name="header">
+							<h:outputText value="Data" />
+						</f:facet>
+						<p:outputLabel value="#{s.dataSaida}">
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"
+								timeZone="America/Sao_Paulo" />
+						</p:outputLabel>
+					</p:column>
+
+					<p:column sortBy="#{s.quantidade}" filterBy="#{s.quantidade}"
+						headerText="Valor">
+						<f:facet name="header">
+							<h:outputText value="Quantidade" />
+						</f:facet>
+						<p:outputLabel value="#{s.quantidade}" />
+					</p:column>
+
+					<p:column sortBy="#{s.valor}" filterBy="#{s.valor}"
+						headerText="Valor">
+						<f:facet name="header">
+							<h:outputText value="Valor" />
+						</f:facet>
+						<p:outputLabel value="#{s.valor}">
+							<f:convertNumber pattern="R$ #,##0.00" locale="pt_BR" />
+						</p:outputLabel>
+					</p:column>
+
+					<f:facet name="footer">
+						<p:outputLabel style="text-align:right;"
+							value="#{movimentacaoCaixaMB.movimentacaoCaixa.saida}">
+							<f:convertNumber pattern="Total - R$ #,##0.00" locale="pt_BR" />
+						</p:outputLabel>
+					</f:facet>
+				</p:dataTable>
+
+
+
+			</h:form>
+		</p:dialog>
+		
+		<!-- dialog confirmação do fechamento de caixa -->
+		<h:form>
+			<p:confirmDialog widgetVar="dlgConfPagamento"
+				header="Confirmar fechamento de caixa?"
+				message="Deseja efetuar o registro?">
+				<p:commandButton update=":frmFechamento :frmFechamento:msg"
+					actionListener="#{movimentacaoCaixaMB.salvar}" icon="fa fa-check"
+					oncomplete="PF('dlgConfPagamento').hide()" value="Sim" />
+				<p:commandButton icon="fa fa-close" value="Fechar"
+					oncomplete="PF('dlgConfPagamento').hide()" />
+			</p:confirmDialog>
+		</h:form>
+
+		<!-- dialog detalhamento das parcelas -->
+		<p:dialog width="800" header="Detalhamento de Parcela"
+			widgetVar="dlgExbParcela" modal="true" appendTo="@(body)"
+			resizable="false" responsive="true">
+			<h:form id="frmExbParcela">
+
+				<p:dataTable
+					rowStyleClass="#{movimentacaoCaixaMB.isParcelaPaga(p)?'destacarPagamento':''}"
+					paginator="true" rowsPerPageTemplate="5,10,15"
+					value="#{movimentacaoCaixaMB.entradaVO.parcelas}" var="p">
+					<p:column headerText="Valor / Parcela">
+
+						<p:outputLabel value="#{p.valor}">
+							<f:convertNumber pattern="R$#,##0.00" />
+						</p:outputLabel>
+
+					</p:column>
+
+					<p:column headerText="Data vencimento">
+						<p:outputLabel value="#{p.dataVencimento}">
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</p:outputLabel>
+					</p:column>
+
+					<p:column headerText="Numero parcela">
+						<p:outputLabel value="#{p.numParcela}ª" />
+					</p:column>
+					<p:column headerText="Status pagamento">
+						<p:outputLabel value="#{p.estadoPagamento.descricao}" />
+					</p:column>
+
+					<p:column headerText="Data pagamento">
+						<p:outputLabel value="#{p.dataPagamento}">
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+						</p:outputLabel>
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+
+</ui:composition>
+
+</html>

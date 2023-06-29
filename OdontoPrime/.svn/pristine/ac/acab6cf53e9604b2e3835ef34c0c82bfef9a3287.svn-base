@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/template/Template.xhtml">
+
+	<ui:define name="content">
+		<h3 style="text-align: right" class="tituloPagina">Relatório de
+			Paciente</h3>
+
+		<h:form id="form">
+
+			<ui:include src="/template/MenuRelatorioPaciente.xhtml" />
+
+			<center>
+				<p:dataTable styleClass="tabela" paginator="true"
+					rowsPerPageLabel="5,10,15" widgetVar="table" rows="5"
+					emptyMessage="Nenhum registro."
+					filteredValue="#{pacienteMB.pacientesFiltrados}"
+					selectionMode="single" selection="#{pacienteMB.paciente}"
+					rowKey="#{p.id}" value="#{pacienteMB.pacientes}" var="p"
+					id="tabela" paginatorPosition="top">
+					>
+
+					<p:column style="text-align:center;" headerText="Foto"
+						exportable="false">
+						<p:graphicImage cache="false" width="100px;" height="100px;"
+							rendered="#{p.nomeImagem eq null or p.nomeImagem eq ''}"
+							value="/img/new-user.png" />
+						<p:graphicImage cache="false" width="100px;" height="100px;"
+							rendered="#{p.nomeImagem ne null}"
+							value="/imagens/#{p.nomeImagem}" />
+					</p:column>
+
+					<p:column sortBy="#{p.nome}" filterBy="#{p.nome}" headerText="Nome">
+						<p:outputLabel style="center" value="#{p.nome}" />
+
+					</p:column>
+
+					<p:column sortBy="#{p.cpf}" filterBy="#{p.cpf}" headerText="CPF">
+						<p:outputLabel style="center" value="#{p.cpf}" />
+
+					</p:column>
+
+					<p:column sortBy="#{p.dataNascimento}"
+						filterBy="#{p.dataNascimento}" headerText="Data de Nascimento">
+						<p:outputLabel style="center" value="#{p.dataNascimento}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</p:outputLabel>
+						<p:outputLabel style="center"
+							rendered="#{p.dataNascimento eq null}" value="Não informado." />
+					</p:column>
+					<p:column sortBy="#{p.email}" filterBy="#{p.email}"
+						headerText="e-Mail">
+						<p:outputLabel style="center" value="#{p.email}" />
+						<p:outputLabel style="center" rendered="#{p.email eq ''}"
+							value="Não informado." />
+					</p:column>
+					<p:column sortBy="#{p.sexo}" filterBy="#{p.sexo}" headerText="Sexo">
+						<p:outputLabel value="#{p.sexo}" />
+
+					</p:column>
+
+					<f:facet name="header">
+						<p:commandLink rendered="#{not empty pacienteMB.pacientes}"
+							style="margin-left:50px;" id="pdf" ajax="false">
+							<p:graphicImage value="/img/pdf.png" />
+							<pe:exporter preProcessor="#{pacienteMB.gerarRelatorioPDF}"
+								encoding="iso-8859-1" type="pdf" target="tabela"
+								datasetPadding="4" fileName="rel_paciente" />
+						</p:commandLink>
+
+						<p:commandLink rendered="#{not empty pacienteMB.pacientes}"
+							id="xls" ajax="false">
+							<p:graphicImage value="/img/csv.png" />
+							<p:dataExporter type="xls" target="tabela" encoding="iso-8859-1"
+								fileName="rel_paciente" />
+						</p:commandLink>
+
+					</f:facet>
+				</p:dataTable>
+
+			</center>
+		</h:form>
+
+
+	</ui:define>
+
+</ui:composition>
+</html>

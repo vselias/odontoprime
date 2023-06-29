@@ -1,0 +1,28 @@
+package br.com.odontoprime.dao;
+
+import java.io.Serializable;
+
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+
+import br.com.odontoprime.entidade.Orcamento;
+import br.com.odontoprime.util.Transactional;
+
+public class OrcamentoDAO extends GenericDAO<Orcamento, Long>implements Serializable {
+
+	private static final long serialVersionUID = 5190895763957738449L;
+	@Inject
+	private EntityManager entityManager;
+
+	@Transactional
+	public void removerDependenciaPaciente(Long id) {
+		try {
+			entityManager.createQuery("Update Orcamento o SET o.paciente = null " + "where o.paciente.id = :id")
+					.setParameter("id", id).executeUpdate();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+}

@@ -1,0 +1,122 @@
+package br.com.odontoprime.entidade;
+
+import java.io.Serializable;
+import java.util.Date;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+
+@SuppressWarnings("serial")
+@Entity
+public class MovimentacaoCaixa implements Serializable {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long id;
+	@OneToOne(cascade = CascadeType.ALL)
+	private Usuario usuario;
+	@Temporal(TemporalType.DATE)
+	@Column(unique = true, nullable = false)
+	private Date data;
+	private Double valorInicial;
+	private Double valorTotal;
+	@Enumerated(EnumType.STRING)
+	private StatusCadastro statusCadastro;
+	private Double entrada;
+	private Double saida;
+	@Enumerated(EnumType.STRING)
+	private TipoMovimentacao tipoMovimentacao;
+
+	public double getSaida() {
+		return saida;
+	}
+
+	public void setSaida(double saida) {
+		this.saida = saida;
+	}
+
+	public double getEntrada() {
+		return entrada;
+	}
+
+	public void setEntrada(double entrada) {
+		this.entrada = entrada;
+	}
+
+	public MovimentacaoCaixa() {
+		this.usuario = new Usuario();
+		this.valorInicial = new Double(0);
+		this.valorTotal = new Double(0);
+		this.entrada = new Double(0);
+		this.saida = new Double(0);
+		this.data = new Date();
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
+
+	public Date getData() {
+		return data;
+	}
+
+	public void setData(Date data) {
+		this.data = data;
+	}
+
+	public Double getValorInicial() {
+		return valorInicial;
+	}
+
+	public void setValorInicial(Double valorInicial) {
+		this.valorInicial = valorInicial;
+	}
+
+	public Double getValorTotal() {
+		return valorTotal;
+	}
+
+	public StatusCadastro getStatusCadastro() {
+		return statusCadastro;
+	}
+
+	public void setStatusCadastro(StatusCadastro statusCadastro) {
+		this.statusCadastro = statusCadastro;
+	}
+
+	public void setValorTotal(Double valorTotal) {
+		this.valorTotal = valorTotal;
+	}
+
+	public TipoMovimentacao getTipoMovimentacao() {
+		return tipoMovimentacao;
+	}
+
+	public void setTipoMovimentacao(TipoMovimentacao tipoMovimentacao) {
+		this.tipoMovimentacao = tipoMovimentacao;
+	}
+
+}

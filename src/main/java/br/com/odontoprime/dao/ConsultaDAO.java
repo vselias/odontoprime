@@ -1,0 +1,204 @@
+package br.com.odontoprime.dao;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import javax.persistence.TemporalType;
+
+import br.com.odontoprime.entidade.Consulta;
+import br.com.odontoprime.entidade.TipoConsulta;
+import br.com.odontoprime.util.Transactional;
+
+public class ConsultaDAO extends GenericDAO<Consulta, Long> implements Serializable {
+
+	@Inject
+	private EntityManager entityManager;
+
+	private static final long serialVersionUID = -7254289950558747564L;
+
+	@Transactional
+	public int removerDependenciaConsunta(Long id) {
+
+		try {
+
+			Query query = entityManager
+					.createQuery("UPDATE Consulta c SET c.paciente = null, c.entrada = null WHERE c.id = :id");
+			query.setParameter("id", id);
+			return query.executeUpdate();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	@Transactional
+	public Double valorTotalVendaPorData(Date inicio, Date dataFinal) {
+
+		try {
+			Query query = entityManager.createQuery("select sum(e.valorComDesconto) from Consulta c join c.entrada e"
+					+ " where date(e.dataLancamento) between :inicio and :dataFinal");
+
+			query.setParameter("inicio", inicio, TemporalType.DATE);
+			query.setParameter("dataFinal", dataFinal, TemporalType.DATE);
+			return (Double) query.getSingleResult();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Transactional
+	public Object[] buscarValorTotalEData(Date data) {
+		try {
+			Query query = entityManager.createQuery(
+					"select sum(c.entrada.valorComDesconto), dataConsulta from Consulta c join c.entrada e "
+							+ "where date(e.dataLancamento) = :data");
+
+			query.setParameter("data", data);
+			query.setMaxResults(1);
+			return (Object[]) query.getSingleResult();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public List<Consulta> buscarConsultasPorData(Date inicio, Date fim) {
+		try {
+
+			Query query = entityManager.createQuery(
+					"select c from Consulta c join c.entrada e where date(e.dataLancamento) between :inicio and :fim");
+			query.setParameter("inicio", inicio, TemporalType.DATE);
+			query.setParameter("fim", fim, TemporalType.DATE);
+			return query.getResultList();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Transactional
+	@SuppressWarnings("unchecked")
+	public List<Consulta> buscarVendasPorDia() {
+
+		Query query = entityManager
+				.createQuery("select c from Consulta c join c.entrada e where date(e.dataLancamento) = CURRENT_DATE");
+
+		return query.getResultList();
+	}
+
+	@Transactional
+	@SuppressWarnings("unchecked")
+	public List<Consulta> buscarConsultasPorPaciente() {
+		Query query = entityManager.createQuery("select distinct  new " + "br.com.odontoprime.entidade.Consulta"
+				+ "(p.nomeImagem, p.id,sum(c.entrada.valorComDesconto), c.tipoConsulta, p.nome , c.dataConsulta ) "
+				+ "from Consulta c inner join c.paciente p group by p.nomeImagem, p.id, c.tipoConsulta, p.nome, c.dataConsulta ");
+		return query.getResultList();
+	}
+
+	@Transactional
+	@SuppressWarnings("unchecked")
+	public List<Object[]> vendasPorAno(int data) {
+		Query query = entityManager
+				.createQuery("select distinct year(e.dataLancamento) , sum(c.entrada.valorComDesconto) "
+						+ " from Consulta c join c.entrada e where year(e.dataLancamento) in (:data)");
+		query.setParameter("data", data);
+		query.setMaxResults(1);
+		return query.getResultList();
+	}
+
+	@Transactional
+	@SuppressWarnings("unchecked")
+	public List<Object[]> vendasPorAnoGrafico(int data) {
+		Query query = entityManager.createQuery("select distinct year(dataLancamento), sum(c.entrada.valorComDesconto) "
+				+ " from Consulta  c join c.entrada e where year(dataLancamento) in (:data)");
+		query.setParameter("data", data);
+		query.setFirstResult(0);
+		query.setMaxResults(1);
+		return query.getResultList();
+
+	}
+
+	@Transactional
+	public Double totalVendasPorAno(int data) {
+		Query query = entityManager.createQuery(
+				"select sum(c.entrada.valorComDesconto) from Consulta c join c.entrada e where year(e.dataLancamento) in :data");
+		query.setParameter("data", data);
+
+		return (Double) query.getSingleResult();
+
+	}
+
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public List<Consulta> buscarConsultasPorData(Date date, Long id) throws Exception {
+		Query query = entityManager.createQuery("select c from Consulta c where c.dataConsulta =:data and c.id <> :id");
+		query.setParameter("data", date);
+		query.setParameter("id", id);
+		return query.getResultList();
+
+	}
+
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public List<Consulta> buscarConsultasPorData(Date date) throws Exception {
+		Query query = entityManager.createQuery("select c from Consulta c where c.dataConsulta =:data");
+		query.setParameter("data", date);
+		return query.getResultList();
+
+	}
+
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public List<Consulta> buscarConsultasFuturas() {
+
+		Query query = entityManager.createQuery("select c from Consulta c where c.dataConsulta > current_date()");
+		return query.getResultList();
+
+	}
+
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public List<Object[]> vendasPorMeses(int mesAtual, int ano) {
+		Query query = entityManager.createQuery(
+				"select month(c.dataConsulta) , sum(e.valorComDesconto) from Consulta c inner join c.entrada e where year(e.dataLancamento) = :ano and month(e.dataLancamento) = :mes");
+		query.setParameter("mes", mesAtual);
+		query.setParameter("ano", ano);
+		return query.getResultList();
+
+	}
+
+	@Transactional
+	public Double vendasPorAnoGrafico(TipoConsulta tipoConsulta, int ano) {
+		Query query = entityManager.createQuery("select sum(p.valor) from Consulta c inner join c.entrada e "
+				+ "join e.parcelas p where c.tipoConsulta = :tipo and p.estadoPagamento = 'PAGO' and year(e.dataLancamento) = :ano");
+		query.setParameter("tipo", tipoConsulta);
+		query.setParameter("ano", ano);
+		return (Double) query.getSingleResult();
+	}
+
+	@Transactional
+	@SuppressWarnings("unchecked")
+	public List<Consulta> buscarConsultasPorDataLancamento(Date dataLancamentoEntrada) {
+		return entityManager.createQuery("select c from Consulta c join c.entrada e where e.dataLancamento = :data")
+				.setParameter("data", dataLancamentoEntrada).getResultList();
+	}
+
+	@Transactional
+	@SuppressWarnings("unchecked")
+	public List<Consulta> buscarConsultasFechamento(Date dataMovimentacao) {
+		return entityManager
+				.createQuery(
+						"select distinct c from Consulta c join c.entrada.parcelas p where date(p.dataPagamento) = "
+								+ ":dataMovimentacao and p.estadoPagamento = 'Pago'")
+				.setParameter("dataMovimentacao", dataMovimentacao).getResultList();
+	}
+}

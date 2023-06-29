@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+
+<ui:composition template="/template/Template.xhtml">
+
+	<ui:define name="content">
+
+		<h:form>
+
+			<h3 class="tituloPagina">Vendas por Paciente</h3>
+
+			<ui:include src="/template/MenuVendasPorCliente.xhtml" />
+
+
+			<center>
+				<p:dataTable styleClass="tabela" paginator="true" rows="5"
+					widgetVar="table" resizableColumns="true" rowKey="#{c.id}"
+					selection="#{registroVendaMB.consulta}" selectionMode="single"
+					value="#{registroVendaMB.consultasPorPaciente}" var="c"
+					filteredValue="#{registroVendaMB.consultasPorPacienteFiltrado}"
+					paginatorPosition="top" rowsPerPageTemplate="5,10,15"
+					emptyMessage="Nenhum registro encontrado.">
+					<f:facet name="header">
+						<p:inputText placeholder="Pesquise por algo..." id="globalFilter"
+							onkeyup="PF('table').filter()" />
+					</f:facet>
+
+					<p:column style="text-align:center;" headerText="Foto">
+						<p:graphicImage width="100px" height="100px"
+							rendered="#{c.paciente.nomeImagem eq null}"
+							value="/img/new-user.png" />
+						<p:graphicImage rendered="#{c.paciente.nomeImagem ne null}"
+							width="100px;" height="100px;"
+							value="/imagens/#{c.paciente.nomeImagem}" />
+					</p:column>
+
+					<p:column sortBy="#{c.tipoConsulta.descricao}"
+						filterBy="#{c.tipoConsulta.descricao}" headerText="Consulta">
+
+						<p:outputLabel value="#{c.tipoConsulta.descricao}" />
+
+						<p:outputLabel rendered="#{c.tipoConsulta eq null}"
+							value="Não informado." />
+					</p:column>
+
+					<p:column filterBy="#{c.paciente.nome}" sortBy="#{c.paciente.nome}"
+						headerText="Paciente">
+						<p:outputLabel value="#{c.paciente.nome}" />
+
+					</p:column>
+
+					<p:column sortBy="#{c.entrada.valorComDesconto}"
+						filterBy="#{c.entrada.valorComDesconto}" headerText="Total">
+						<p:outputLabel value="#{c.valorConsulta}">
+							<f:convertNumber pattern="R$ #,##0.00" />
+						</p:outputLabel>
+					</p:column>
+				</p:dataTable>
+			</center>
+
+		</h:form>
+
+
+	</ui:define>
+
+
+</ui:composition>
+
+
+</html>

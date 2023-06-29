@@ -1,0 +1,173 @@
+package br.com.odontoprime.entidade;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+@Entity
+@SequenceGenerator(name = "entrada_seq", sequenceName = "seq_entrada", allocationSize = 2)
+public class Entrada implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8248762477115345323L;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long id;
+
+	@Enumerated(EnumType.STRING)
+	private EstadoPagamento estadoPagamento;
+
+	@Temporal(TemporalType.DATE)
+	private Date dataPagamento;
+
+	@Temporal(TemporalType.DATE)
+	private Date dataVencimento;
+
+	private String opcaoPagamento;
+
+	private String parcela;
+
+	private Double valor;
+
+	@Temporal(TemporalType.DATE)
+	private Date dataLancamento;
+
+	private int desconto;
+
+	private Double valorComDesconto;
+
+	private Boolean parcelado;
+
+	@Enumerated(EnumType.STRING)
+	private FormaPagamento formaPagamento;
+
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "entrada_id")
+	private List<Parcela> parcelas;
+
+	public FormaPagamento getFormaPagamento() {
+		return formaPagamento;
+	}
+
+	public void setFormaPagamento(FormaPagamento formaPagamento) {
+		this.formaPagamento = formaPagamento;
+	}
+
+	public List<Parcela> getParcelas() {
+		return parcelas;
+	}
+
+	public void setParcelas(List<Parcela> parcelas) {
+		this.parcelas = parcelas;
+	}
+
+	public Date getDataVencimento() {
+		return dataVencimento;
+	}
+
+	public Entrada() {
+		estadoPagamento = EstadoPagamento.PENDENTE;
+		parcelas = new ArrayList<>();
+	}
+
+	public void setDataVencimento(Date dataVencimento) {
+		this.dataVencimento = dataVencimento;
+	}
+
+	public Boolean getParcelado() {
+		return parcelado;
+	}
+
+	public void setParcelado(Boolean parcelado) {
+		this.parcelado = parcelado;
+	}
+
+	public EstadoPagamento getEstadoPagamento() {
+		return estadoPagamento;
+	}
+
+	public void setEstadoPagamento(EstadoPagamento estadoPagamento) {
+		this.estadoPagamento = estadoPagamento;
+	}
+
+	public String getParcela() {
+		return parcela;
+	}
+
+	public void setParcela(String parcela) {
+		this.parcela = parcela;
+	}
+
+	public Double getValorComDesconto() {
+		return valorComDesconto;
+	}
+
+	public void setValorComDesconto(Double valorComDesconto) {
+		this.valorComDesconto = valorComDesconto;
+	}
+
+	public Date getDataLancamento() {
+		return dataLancamento;
+	}
+
+	public void setDataLancamento(Date dataLancamento) {
+		this.dataLancamento = dataLancamento;
+	}
+
+	public int getDesconto() {
+		return desconto;
+	}
+
+	public void setDesconto(int desconto) {
+		this.desconto = desconto;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Date getDataPagamento() {
+		return dataPagamento;
+	}
+
+	public void setDataPagamento(Date dataPagamento) {
+		this.dataPagamento = dataPagamento;
+	}
+
+	public String getOpcaoPagamento() {
+		return opcaoPagamento;
+	}
+
+	public void setOpcaoPagamento(String opcaoPagamento) {
+		this.opcaoPagamento = opcaoPagamento;
+	}
+
+	public Double getValor() {
+		return valor;
+	}
+
+	public void setValor(Double valor) {
+		this.valor = valor;
+	}
+
+}

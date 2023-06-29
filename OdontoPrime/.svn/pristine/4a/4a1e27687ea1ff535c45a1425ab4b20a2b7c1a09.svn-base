@@ -1,0 +1,251 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/template/Template.xhtml">
+
+
+	<ui:define name="content">
+		<h3 style="text-align: right" class="tituloPagina">Lista de
+			Consulta</h3>
+
+
+
+		<h:form style="marin: 20px" id="frmConsulta">
+
+			<ui:include src="/template/MenuPesquisaConsulta.xhtml" />
+			<p:messages id="msg" closable="true" />
+
+			<center>
+
+
+				<p:dataTable widgetVar="tblConsulta" tableStyle="width:auto"
+					resizableColumns="true" styleClass="tabela" paginator="true"
+					rowsPerPageTemplate="5,10,15" reflow="true" rowKey="#{c.id}"
+					selectionMode="single" selection="#{consultaMB.consulta}"
+					value="#{consultaMB.consultas}" id="tblConsulta" var="c" rows="5"
+					paginatorPosition="top" emptyMessage="Nenhum registro.">
+
+
+					<p:column headerText="Foto">
+						<p:graphicImage cache="false" width="100" height="100"
+							rendered="#{c.paciente.nomeImagem eq null or c.paciente.nomeImagem eq ''}"
+							value="/img/new-user.png" />
+						<p:graphicImage cache="false" width="100" height="100"
+							rendered="#{c.paciente.nomeImagem ne null and c.paciente.nomeImagem ne ''}"
+							value="/imagens/#{c.paciente.nomeImagem}" />
+					</p:column>
+
+
+					<p:column filterBy="#{c.paciente.nome}" sortBy="#{c.paciente.nome}"
+						headerText="Paciente">
+						<p:outputLabel value="#{c.paciente.nome}" />
+					</p:column>
+
+
+					<p:column headerText="Consulta" filterBy="#{c.tipoConsulta}"
+						sortBy="#{c.tipoConsulta}">
+						<p:outputLabel value="#{c.tipoConsulta.descricao}" />
+						<p:outputLabel rendered="#{c.tipoConsulta.descricao eq null}"
+							value="Não informado." />
+
+					</p:column>
+
+					<p:column filterMatchMode="startsWith" filterBy="#{c.dataConsulta}"
+						sortBy="#{c.dataConsulta}" headerText="Data">
+						<p:outputLabel value="#{c.dataConsulta}">
+							<f:convertDateTime timeZone="America/Sao_Paulo"
+								pattern="dd/MM/yyyy HH:mm:ss" locale="pt_BR" />
+						</p:outputLabel>
+					</p:column>
+
+
+					<p:column filterBy="#{c.entrada.valor}" sortBy="#{c.entrada.valor}"
+						headerText="Valor">
+						<p:outputLabel value="#{c.entrada.valor}">
+							<f:convertNumber pattern="R$ #,##0.00" />
+						</p:outputLabel>
+						<p:outputLabel rendered="#{c.entrada.valor eq null}"
+							value="R$ 0,00" />
+					</p:column>
+					<p:column filterBy="#{c.entrada.desconto}"
+						sortBy="#{c.entrada.desconto}" headerText="Desconto">
+						<p:outputLabel rendered="#{c.entrada.desconto ne null}"
+							value="#{c.entrada.desconto}%" />
+						<p:outputLabel rendered="#{c.entrada.desconto eq null}" value="0" />
+					</p:column>
+
+
+
+					<p:column filterBy="#{c.entrada.valorComDesconto}"
+						sortBy="#{c.entrada.valorComDesconto}" headerText="Total">
+
+						<p:outputLabel value="#{c.entrada.valorComDesconto}">
+							<f:convertNumber pattern="R$ #,##0.00" />
+						</p:outputLabel>
+
+						<p:outputLabel rendered="#{c.entrada.valorComDesconto eq null}"
+							value="R$ 0,00" />
+					</p:column>
+
+
+					<p:column style="text-align:center;" headerText="Ações">
+
+						<p:commandButton icon="fa fa-search" update=" :frmPesqConsulta"
+							oncomplete="PF('dlgPesqConsulta').show()">
+							<f:setPropertyActionListener value="#{c}"
+								target="#{consultaMB.consulta}" />
+						</p:commandButton>
+
+						<p:spacer width="10px;" />
+
+						<p:commandButton disabled="#{consultaMB.desativarBotaoEditar(c)}"
+							icon="fa fa-edit" action="#{consultaMB.editarConsulta(c)}" />
+
+						<p:spacer width="10px;" />
+
+						<p:commandButton rendered="#{usuarioMB.usuario.adm}"
+							update="@form" oncomplete="PF('exclusao').show()"
+							icon="fa fa-trash">
+							<f:setPropertyActionListener value="#{c}"
+								target="#{consultaMB.consulta}" />
+						</p:commandButton>
+
+						<p:spacer width="10px;" />
+
+						<p:commandButton rendered="#{usuarioMB.usuario.adm}"
+							update=":frmDetalheConsulta"
+							oncomplete="PF('dlgDetalheConsulta').show();" icon="fa fa-info">
+							<f:setPropertyActionListener value="#{c}"
+								target="#{consultaMB.consulta}" />
+						</p:commandButton>
+					</p:column>
+
+				</p:dataTable>
+			</center>
+
+
+			<!-- 			confirm dialog para exclusao da consulta -->
+			<p:confirmDialog widgetVar="exclusao" severity="alert"
+				header="Confirmação de exclusão"
+				message="Você deseja remover consulta id: #{consultaMB.consulta.id}?">
+
+
+				<p:outputLabel value="Paciente:" />
+				<p:outputLabel value="#{consultaMB.consulta.paciente.nome}" />
+
+				<br />
+				<br />
+
+				<p:outputLabel value="Consulta:" />
+				<p:outputLabel value="#{consultaMB.consulta.tipoConsulta.descricao}" />
+				<br />
+				<br />
+
+				<p:commandButton update="@form , tblConsulta,  msg" value="Sim"
+					oncomplete="PF('exclusao').hide()" action="#{consultaMB.excluir}" />
+
+				<p:commandButton value="Não" oncomplete="PF('exclusao').hide()" />
+			</p:confirmDialog>
+
+
+
+		</h:form>
+
+
+
+
+
+
+		<!-- 		dialog visualização da consulta -->
+		<p:dialog closeOnEscape="true" closable="true" dynamic="true"
+			widgetVar="dlgPesqConsulta" height="450" width="800"
+			header="Visualização da consulta." modal="true" appendTo="@(body)"
+			resizable="false">
+			<h:form id="frmPesqConsulta">
+				<p:panelGrid columns="2" layout="grid"
+					styleClass="ui-panelgrid-blank"
+					columnClasses="ui-grid-col-4,
+			ui-grid-col-8
+			">
+					<p:outputLabel value="Id" />
+					<p:inputText readonly="true" value="#{consultaMB.consulta.id}" />
+
+					<p:outputLabel value="Paciente" />
+					<p:inputText readonly="true"
+						value="#{consultaMB.consulta.paciente.nome}" />
+
+					<p:outputLabel
+						rendered="#{consultaMB.consulta.tipoConsulta.descricao ne null}"
+						value="Consulta" />
+					<p:inputText readonly="true"
+						rendered="#{consultaMB.consulta.tipoConsulta.descricao ne null}"
+						value="#{consultaMB.consulta.tipoConsulta.descricao}" />
+
+
+					<p:outputLabel value="Opção de pagamento" />
+					<p:inputText readonly="true"
+						value="#{consultaMB.consulta.entrada.opcaoPagamento}" />
+
+					<p:outputLabel value="Estado da consulta" />
+					<p:inputText readonly="true"
+						value="#{consultaMB.consulta.estadoConsulta.descricao}" />
+
+
+					<p:outputLabel
+						rendered="#{consultaMB.consulta.entrada.parcela ne null}"
+						value="Forma de pagamento" />
+					<p:inputText
+						rendered="#{consultaMB.consulta.entrada.parcela ne null}"
+						readonly="true" value="#{consultaMB.consulta.entrada.parcela}" />
+
+					<p:outputLabel value="Data Lançamento" />
+					<p:inputText readonly="true"
+						value="#{consultaMB.consulta.entrada.dataLancamento}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</p:inputText>
+				</p:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<!-- dialog detalhes do cadastro da consulta -->
+		<p:dialog header="Informações do cadastro da consulta"
+			resizable="false" modal="true" appendTo="@(body)"
+			widgetVar="dlgDetalheConsulta">
+			<h:form id="frmDetalheConsulta">
+				<h:panelGrid cellpadding="10px;" columns="2">
+					<p:outputLabel value="Cadastrado por:" />
+					<p:inputText readonly="true"
+						value="#{consultaMB.consulta.nomeUsuarioCadastrou}" />
+
+					<p:outputLabel value="Data modificação:" />
+					<p:inputText readonly="true"
+						value="#{consultaMB.consulta.dataCadastro}">
+						<f:convertDateTime locale="pt_BR" timeZone="America/Sao_Paulo"
+							pattern="dd/MM/yyyy HH:mm:ss" />
+					</p:inputText>
+
+					<p:outputLabel value="Status do cadastro" />
+					<p:inputText readonly="true"
+						value="#{consultaMB.consulta.statusCadastro.descricao}" />
+
+					<p:outputLabel value="Data registro:" />
+					<p:inputText readonly="true"
+						value="#{consultaMB.consulta.entrada.dataLancamento}">
+						<f:convertDateTime locale="pt_BR" timeZone="America/Sao_Paulo"
+							pattern="dd/MM/yyyy" />
+					</p:inputText>
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+
+</ui:composition>
+
+
+</html>

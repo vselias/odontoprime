@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+
+<ui:composition template="/template/Template.xhtml">
+
+	<ui:define name="content">
+
+		<h:form>
+
+			<h3 class="tituloPagina">Gráfico</h3>
+
+			<ui:include src="/template/MenuNovoGrafico.xhtml" />
+
+			<p:spacer height="10" />
+
+			<p:messages id="msg" showDetail="false" escape="true" closable="true" />
+
+			<p:panel style="text-align:center;"
+				header="Gráfico para comparar valor total de vendas recebidas entre dois tipos de consulta com período entre anos.">
+				<div style="margin: 10px 30px;" class="ui-grid-responsive">
+					<div class="ui-grid-row">
+
+						<center>
+							<div class="ui-grid-col-6">
+								<h:panelGrid columns="1" cellpadding="5px;">
+									<p:outputLabel value="Primeira consulta" />
+									<p:selectOneMenu
+										value="#{graficoVendaMB.filtroNovoGrafico.primeiroTipoComparacao}"
+										style="width:150px">
+										<f:selectItems var="item" itemValue="#{item}"
+											itemLabel="#{item.descricao}"
+											value="#{graficoVendaMB.tiposConsulta}" />
+									</p:selectOneMenu>
+
+									<p:outputLabel value="Do ano de" />
+									<p:inputText value="#{graficoVendaMB.filtroNovoGrafico.ano}" />
+								</h:panelGrid>
+							</div>
+							<div class="ui-grid-col-6">
+								<h:panelGrid columns="1" cellpadding="5px;">
+									<p:outputLabel value="Segunda consulta" />
+									<p:selectOneMenu
+										value="#{graficoVendaMB.filtroNovoGrafico.segundoTipoComparacao}"
+										style="width:150px">
+										<f:selectItems var="item" itemValue="#{item}"
+											itemLabel="#{item.descricao}"
+											value="#{graficoVendaMB.tiposConsulta}" />
+									</p:selectOneMenu>
+									<p:outputLabel value="Do ano até" />
+									<p:inputText value="#{graficoVendaMB.filtroNovoGrafico.anoAte}" />
+								</h:panelGrid>
+							</div>
+						</center>
+
+						<div class="ui-grid-row">
+							<div class="ui-grid-col-12">
+								<center>
+
+									<p:chart id="grafico" widgetVar="chart"
+										style="margin-top:90px;" type="bar"
+										model="#{graficoVendaMB.novoBarChartModel}" />
+
+									<p:commandButton style="margin:10px;"
+										icon="fa fa-external-link" onclick="exportChart()"
+										value="Exportar" />
+								</center>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</p:panel>
+		</h:form>
+
+		<p:dialog widgetVar="dlg" showEffect="fade" modal="true"
+			header="Gráfico em formato de imagem." resizable="false">
+			<p:outputPanel id="botao" layout="block" />
+		</p:dialog>
+
+		<script type="text/javascript">
+			function exportChart() {
+				    //export image
+				    $('#botao').empty().append(PF('chart').exportAsImage());
+				 
+				    //show the dialog
+				    PF('dlg').show();
+					}
+		</script>
+
+
+
+	</ui:define>
+
+</ui:composition>
+
+</html>

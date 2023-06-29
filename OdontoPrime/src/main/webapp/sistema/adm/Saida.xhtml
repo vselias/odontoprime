@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/template/Template.xhtml">
+	<f:metadata>
+		<f:viewParam converter="SaidaConverter" name="codigo"
+			value="#{saidaMB.saida}" />
+	</f:metadata>
+
+
+	<ui:define name="content">
+
+		<h3 class="tituloPagina">Saída de Caixa</h3>
+		<h:form id="frmSaida">
+
+			<ui:include src="/template/MenuSaida.xhtml" />
+
+			<p:spacer height="10px" />
+
+			<p:messages id="msg" closable="true" />
+			<p:panel style="text-align:center;" header="Informações de Saída">
+				<center>
+					<div class="ui-grid-row">
+						<div class="ui-grid-col-6">
+							<h:panelGrid cellpadding="5px;" columns="2">
+								<p:outputLabel for="item" value="Item" />
+								<br />
+								<p:inputText required="true"
+									requiredMessage="Item deve ser informado." id="item"
+									value="#{saidaMB.saida.item}" />
+								<br />
+								<p:outputLabel value="Descrição" />
+								<br />
+								<p:inputTextarea value="#{saidaMB.saida.descricao}" />
+								<br />
+								<p:outputLabel for="valor" value="Valor" />
+								<br />
+								<p:inputText required="true"
+									requiredMessage="Valor deve ser informado." maxlength="10"
+									id="valor" value="#{saidaMB.saida.valor}">
+									<f:convertNumber maxFractionDigits="2" minFractionDigits="2" />
+								</p:inputText>
+								<br />
+								<br />
+							</h:panelGrid>
+						</div>
+						<div class="ui-grid-col-6">
+							<h:panelGrid cellpadding="5px;" columns="2">
+								<p:outputLabel for="data" value="Data" />
+								<br />
+								<p:calendar required="true"
+									requiredMessage="Data deve ser informada." id="data"
+									navigator="true" mask="99/99/9999"
+									value="#{saidaMB.saida.dataSaida}" locale="pt_BR"
+									timeZone="America/Sao_Paulo" pattern="dd/MM/yyyy" />
+								<br />
+								<p:outputLabel value="Motivo" />
+								<br />
+								<p:inputTextarea value="#{saidaMB.saida.motivo}" />
+								<br />
+								<p:outputLabel value="Quantidade" />
+								<br />
+								<p:spinner min="1" value="#{saidaMB.saida.quantidade}" />
+							</h:panelGrid>
+						</div>
+					</div>
+				</center>
+			</p:panel>
+		</h:form>
+	</ui:define>
+
+</ui:composition>
+
+</html>

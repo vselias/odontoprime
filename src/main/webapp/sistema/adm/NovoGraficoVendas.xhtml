@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/template/Template.xhtml">
+	<ui:define name="content">
+		<h:form>
+			<h3 style="text-align: right" class="tituloPagina">Gráfico de
+				Vendas por Data</h3>
+			<ui:include src="/template/MenuGraficoVendas.xhtml" />
+
+			<p:panelGrid columns="4" layout="grid"
+				columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4">
+				<h:outputText value="Primeira data" />
+				<p:calendar value="#{graficoVendaMB.primeiraData}" navigator="true"
+					mode="inline" />
+
+				<h:outputText value="Segunda data" />
+				<p:calendar value="#{graficoVendaMB.segundaData}" navigator="true"
+					mode="inline" />
+			</p:panelGrid>
+			<p:spacer height="5" />
+			<div class="ui-grid ui-grid-responsive">
+				<div class="ui-grid-row">
+					<div class="ui-grid-col-10"></div>
+					<div class="ui-grid-col-2">
+						<p:commandButton ajax="false"
+							action="#{graficoVendaMB.gerarGrafico}" value="Gerar Gráfico" />
+					</div>
+				</div>
+			</div>
+			<p:spacer height="5" />
+		</h:form>
+		<h:form>
+			<div class="ui-grid-responsive">
+				<div class="ui-grid-row">
+					<div class="ui-grid-col-12">
+						<p:panel style="text-align:center;"
+							header="Gráfico referente a venda da primeira e segunda data">
+							<p:chart id="grafico" type="bar"
+								model="#{graficoVendaMB.barChartModel}" />
+						</p:panel>
+					</div>
+				</div>
+			</div>
+		</h:form>
+	</ui:define>
+
+</ui:composition>
+
+</html>

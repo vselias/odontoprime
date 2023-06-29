@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/template/Template.xhtml">
+
+
+
+	<ui:define name="content">
+
+
+		<h:form>
+
+			<h3 class="tituloPagina">Vendas Hoje</h3>
+
+			<ui:include src="/template/MenuVendasPorDia.xhtml" />
+
+			<center>
+				<p:dataTable rowsPerPageTemplate="5,10,15" rows="5"
+					widgetVar="table" emptyMessage="Nenhum registro." var="c"
+					paginatorPosition="bottom" paginator="true"
+					value="#{registroVendaMB.consultasDia}" styleClass="tabela">
+					<f:facet name="header">
+						<p:inputText placeholder="Pesquise por algo..." id="globalFilter"
+							onkeyup="PF('table').filter()" />
+					</f:facet>
+
+					<p:column style="text-align:center;" headerText="Foto">
+						<p:graphicImage width="100px" height="100px"
+							rendered="#{c.paciente.nomeImagem eq null or c.paciente.nomeImagem eq ''}"
+							value="/img/new-user.png" />
+						<p:graphicImage width="100px" height="100px"
+							rendered="#{c.paciente.nomeImagem ne null}"
+							value="/imagens/#{c.paciente.nomeImagem}" />
+					</p:column>
+					<p:column filterBy="#{c.paciente.nome}" sortBy="#{c.paciente.nome}"
+						headerText="Paciente">
+						<h:outputText value="#{c.paciente.nome}" />
+					</p:column>
+					<p:column filterBy="#{c.dataConsulta}" sortBy="#{c.dataConsulta}"
+						headerText="Data da Consulta">
+						<h:outputText value="#{c.dataConsulta}">
+							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy HH:mm:ss"
+								timeZone="America/Sao_Paulo" />
+						</h:outputText>
+					</p:column>
+					<p:column filterBy="#{c.entrada.valorComDesconto}"
+						sortBy="#{c.entrada.valorComDesconto}" headerText="Valor">
+						<h:outputText value="#{c.entrada.valorComDesconto}">
+							<f:convertNumber pattern="R$ #,##0.00" />
+						</h:outputText>
+					</p:column>
+
+				</p:dataTable>
+			</center>
+
+
+
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>
+</html>

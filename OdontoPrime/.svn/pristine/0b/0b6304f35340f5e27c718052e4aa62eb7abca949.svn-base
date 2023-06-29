@@ -1,0 +1,157 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/template/Template.xhtml">
+
+
+	<ui:define name="content">
+		<h3 style="text-align: right" class="tituloPagina">Lista de
+			Orçamento</h3>
+
+		<h:form id="frmOrcamento">
+			<ui:include src="/template/MenuPesquisaOrcamento.xhtml" />
+
+			<p:messages id="msg" escape="true" closable="true" />
+			<center>
+				<p:dataTable filteredValue="#{orcamentoMB.orcamentosFiltrados}"
+					styleClass="tabela" paginator="true" rowsPerPageTemplate="5,10,15"
+					reflow="true" widgetVar="tabela" selectionMode="single"
+					selection="#{orcamentoMB.orcamento}" rowKey="#{orcamento.id}"
+					value="#{orcamentoMB.orcamentos}" id="tabela" var="orcamento"
+					rows="5" paginatorPosition="bottom" emptyMessage="Nenhum registro.">
+
+					<f:facet name="header">
+						<p:inputText placeholder="Pesquise por algo..." id="globalFilter"
+							onkeyup="PF('tabela').filter()" />
+					</f:facet>
+
+					<p:column style="text-align:center;" headerText="Foto"
+						exportable="false">
+						<p:graphicImage cache="false" width="100" height="100"
+							rendered="#{orcamento.paciente.nomeImagem eq null or orcamento.paciente.nomeImagem eq ''}"
+							value="/img/new-user.png" />
+						<p:graphicImage cache="false" width="100" height="100"
+							rendered="#{orcamento.paciente.nomeImagem ne null}"
+							value="/imagens/#{orcamento.paciente.nomeImagem}" />
+					</p:column>
+
+					<p:column filterBy="#{orcamento.paciente.nome}"
+						sortBy="#{orcamento.paciente.nome}" headerText="Paciente">
+						<p:outputLabel value="#{orcamento.paciente.nome}" />
+					</p:column>
+
+
+					<p:column headerText="Consulta"
+						filterBy="#{orcamento.tipoConsulta}"
+						sortBy="#{orcamento.tipoConsulta}">
+						<p:outputLabel value="#{orcamento.tipoConsulta}" />
+
+					</p:column>
+					<p:column headerText="Valor" filterBy="#{orcamento.valor}"
+						sortBy="#{orcamento.valor}">
+						<p:outputLabel value="#{orcamento.valor}">
+							<f:convertNumber pattern="R$ #,##0.00" />
+						</p:outputLabel>
+					</p:column>
+
+					<p:column filterMatchMode="contains" filterBy="#{orcamento.data}"
+						sortBy="#{orcamento.data}" headerText="Data">
+						<p:outputLabel value="#{orcamento.data}">
+							<f:convertDateTime timeZone="America/Sao_Paulo"
+								pattern="dd/MM/yyyy" locale="pt_BR" />
+						</p:outputLabel>
+					</p:column>
+					<p:column style="text-align:center;" exportable="false"
+						headerText="Ações">
+
+						<p:commandButton update=":frmInfoCadastro"
+							oncomplete="PF('dlgInfoCadastro').show();" icon="fa fa-info">
+							<f:setPropertyActionListener value="#{orcamento}"
+								target="#{orcamentoMB.orcamento}" />
+						</p:commandButton>
+
+						<p:spacer width="10px;" />
+
+						<p:button outcome="Orcamento" icon="fa fa-edit">
+							<f:param name="codigo" value="#{orcamento.id}" />
+						</p:button>
+						<p:spacer width="10px;" />
+						<p:commandButton rendered="#{usuarioMB.usuario.adm}"
+							update=":frmExclusao" oncomplete="PF('exclusao').show();"
+							icon="fa fa-trash">
+							<f:setPropertyActionListener value="#{orcamento}"
+								target="#{orcamentoMB.orcamento}" />
+						</p:commandButton>
+					</p:column>
+					<f:facet name="header">
+						<p:commandLink rendered="#{not empty orcamentoMB.orcamentos}"
+							style="margin-left:250px;" id="pdf" ajax="false">
+							<p:graphicImage value="/img/pdf.png" />
+							<pe:exporter type="pdf" target="tabela" encoding="iso-8859-1"
+								preProcessor="#{orcamentoMB.gerarPDF}" fileName="rel_orçamento" />
+						</p:commandLink>
+
+					</f:facet>
+				</p:dataTable>
+			</center>
+		</h:form>
+
+
+		<h:form id="frmExclusao">
+			<!-- 			confirm dialog para exclusao da consulta -->
+			<p:confirmDialog widgetVar="exclusao" severity="alert"
+				header="Confirmação exclusao saída"
+				message="Você deseja remover orçamento id: #{orcamentoMB.orcamento.id}?">
+
+
+				<p:outputLabel value="Paciente:" />
+				<p:outputLabel value="#{orcamentoMB.orcamento.paciente.nome}" />
+				<br />
+				<br />
+
+				<p:outputLabel value="Consulta:" />
+				<p:outputLabel value="#{orcamentoMB.orcamento.tipoConsulta}" />
+				<br />
+
+				<p:commandButton update=":frmOrcamento:tabela ,  :frmOrcamento:msg"
+					value="Sim" oncomplete="PF('exclusao').hide()"
+					action="#{orcamentoMB.remover}" />
+
+				<p:commandButton value="Não" oncomplete="PF('exclusao').hide()" />
+			</p:confirmDialog>
+		</h:form>
+
+
+		<p:dialog header="Detalhes do cadastro do orçamento" modal="true"
+			closable="true" resizable="false" closeOnEscape="true"
+			widgetVar="dlgInfoCadastro">
+			<h:form id="frmInfoCadastro">
+				<p:panelGrid columns="2">
+					<p:outputLabel value="Usuário:" />
+					<p:outputLabel value="#{orcamentoMB.orcamento.usuario.login}" />
+
+					<p:outputLabel value="Status:" />
+					<p:outputLabel
+						value="#{orcamentoMB.orcamento.statusCadastro.descricao}" />
+
+					<p:outputLabel value="Data cadastro:" />
+					<p:outputLabel value="#{orcamentoMB.orcamento.dataCadastro}">
+						<f:convertDateTime timeZone="America/Sao_Paulo"
+							pattern="dd/MM/yyyy HH:mm:ss" locale="pt_BR" />
+					</p:outputLabel>
+				</p:panelGrid>
+			</h:form>
+		</p:dialog>
+
+
+	</ui:define>
+
+</ui:composition>
+
+
+</html>

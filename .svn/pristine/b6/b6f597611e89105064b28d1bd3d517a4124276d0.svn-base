@@ -1,0 +1,236 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/template/Template.xhtml">
+
+	<f:metadata>
+		<f:viewParam converter="pacienteConverter" name="codigo"
+			value="#{pacienteMB.paciente}" />
+	</f:metadata>
+
+	<ui:define name="content">
+
+
+
+		<h3 class="tituloPagina" style="text-align: right">
+			#{pacienteMB.paciente.id gt 0?'Editar Paciente':'Novo Paciente' }</h3>
+
+		<h:form id="frmPaciente">
+			<div class="ui-grid-responsive">
+				<div class="ui-grid-row">
+
+					<ui:include src="/template/MenuPaciente.xhtml" />
+
+					<p:messages id="msg" closable="true" />
+
+
+					<p:spacer height="10" />
+
+					<p:panel id="pnlDadosPaciente" 
+						header="Informações do Paciente">
+
+
+						<p:tabView prependId="false">
+							<p:tab title="Dados do Paciente">
+
+								<div class="ui-grid-row">
+									<div class="ui-grid-col-4">
+
+										<h:panelGrid cellpadding="5" columns="2">
+											<p:outputLabel for="nome" value="Nome" />
+											<p:spacer />
+											<p:inputText id="nome" required="true"
+												requiredMessage="Nome do paciente deve ser informado."
+												value="#{pacienteMB.paciente.nome}" />
+											<p:spacer />
+											<p:outputLabel for="cpf" value="CPF" />
+											<p:spacer />
+											<p:inputMask id="cpf" mask="999.999.999-99" required="true"
+												requiredMessage="Cpf deve ser informado."
+												validatorMessage="Cpf inválido!"
+												value="#{pacienteMB.paciente.cpf}">
+												<f:validator validatorId="CPF" />
+											</p:inputMask>
+
+											<p:spacer />
+											<p:outputLabel value="Data Nascimento" />
+											<p:spacer />
+											<p:calendar placeholder="Exemplo: 24/12/1990"
+												mask="99/99/9999"
+												value="#{pacienteMB.paciente.dataNascimento}"
+												navigator="true" id="german" locale="pt_BR"
+												timeZone="America/Sao_Paulo" pattern="dd/MM/yyyy" />
+										</h:panelGrid>
+									</div>
+
+									<div class="ui-grid-col-4">
+										<h:panelGrid cellpadding="5" columns="2">
+											<p:outputLabel value="Sexo" />
+											<p:spacer />
+
+											<p:selectOneMenu style="width:150px"
+												value="#{pacienteMB.paciente.sexo}">
+												<f:selectItem itemLabel="Masculino" itemValue="Masculino" />
+												<f:selectItem itemLabel="Feminino" itemValue="Feminino" />
+											</p:selectOneMenu>
+											<p:spacer />
+
+											<p:outputLabel value="e-Mail" />
+											<p:spacer />
+
+											<p:inputText required="false" id="email"
+												validatorMessage="E-mail inválido"
+												value="#{pacienteMB.paciente.email}">
+												<f:validateRegex
+													pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+											</p:inputText>
+											<p:spacer />
+
+
+											<p:outputLabel value="Telefone Celular" />
+											<p:spacer />
+
+											<p:inputMask value="#{pacienteMB.paciente.celular}"
+												mask="(99)9-9999-9999" />
+											<p:spacer />
+
+											<p:outputLabel value="Telefone Fixo" />
+											<p:spacer />
+
+											<p:inputMask value="#{pacienteMB.paciente.telefone}"
+												mask="(99)-9999-9999" />
+											<p:spacer />
+										</h:panelGrid>
+									</div>
+
+									<div class="ui-grid-col-4">
+										<p:outputLabel value="Foto" />
+										<br />
+										<p:outputPanel id="fotoPaciente">
+											<p:graphicImage
+												rendered="#{pacienteMB.paciente.nomeImagem eq null}"
+												width="100px" height="100px" value="/img/new-user.png" />
+											<p:graphicImage
+												rendered="#{pacienteMB.paciente.nomeImagem ne null}"
+												value="/imagens/#{pacienteMB.paciente.nomeImagem}" />
+										</p:outputPanel>
+										<br />
+										<p:commandButton immediate="true"
+											actionListener="#{pacienteMB.ativarWebCam}"
+											oncomplete="PF('dlgExibirFoto').show();" value="Inserir Foto"
+											icon="fa fa-camera" />
+
+									</div>
+								</div>
+							</p:tab>
+							<p:tab title="Endereço">
+								<p:panelGrid columnClasses="ui-grid-col-2,ui-grid-col-10"
+									layout="grid" styleClass="ui-panelgrid-blank" columns="2">
+									<p:outputLabel value="Rua" />
+									<p:inputText value="#{pacienteMB.paciente.endereco.rua}" />
+									<p:outputLabel value="Número" />
+									<p:inputText value="#{pacienteMB.paciente.endereco.numero}" />
+									<p:outputLabel value="Bairro" />
+									<p:inputText value="#{pacienteMB.paciente.endereco.bairro}" />
+									<p:outputLabel value="Cidade" />
+									<p:inputText value="#{pacienteMB.paciente.endereco.cidade}" />
+									<p:outputLabel value="Estado" />
+									<p:inputText value="#{pacienteMB.paciente.endereco.uf}" />
+								</p:panelGrid>
+							</p:tab>
+						</p:tabView>
+					</p:panel>
+				</div>
+			</div>
+		</h:form>
+
+
+		<p:dialog draggable="false" closeOnEscape="true"
+			header="Insira foto do paciente" responsive="true" resizable="false"
+			position="center" dynamic="true" modal="true" closable="true"
+			widgetVar="dlgExibirFoto">
+			<h:form id="frmSelecionarFoto">
+
+				<p:fileUpload label="Selecione a imagem"
+					fileLimitMessage="Imagem muito grande." fileLimit="1"
+					invalidSizeMessage="Apenas 1 foto por vez."
+					allowTypes="/(\.|\/)(jpe?g|png)$/"
+					update="pnlFotoUpload imagemCropper :formGlobal:msgGlobal"
+					fileUploadListener="#{pacienteMB.subirImagem}" />
+
+				<h:panelGrid columns="2">
+					<p:panel style="overflow:scroll; width:600px; height:400px;"
+						header="Foto normal" id="pnlFotoUpload">
+						<p:graphicImage
+							rendered="#{pacienteMB.paciente.imagemCropper eq null}"
+							value="/img/new-user.png" cache="false" />
+
+						<p:imageCropper id="imagemCropper"
+							rendered="#{pacienteMB.exibirImagemCropper}"
+							value="#{pacienteMB.croppedImage}" minSize="100,100"
+							maxSize="200,200"
+							image="/temp/imagens/#{pacienteMB.paciente.imagemCropper}" />
+					</p:panel>
+
+					<p:panel header="Foto recortada" id="pnlFotoRecortada">
+						<p:graphicImage
+							rendered="#{pacienteMB.paciente.imagemRecortada eq null}"
+							value="/img/new-user.png" cache="false" />
+
+						<p:graphicImage rendered="#{pacienteMB.exibirImagemRecortada}"
+							id="fotoRecortada" cache="false"
+							value="/temp/imagens/#{pacienteMB.paciente.imagemRecortada}" />
+					</p:panel>
+				</h:panelGrid>
+				<p:spacer height="5px;" />
+
+				<p:panelGrid columns="4" layout="grid"
+					columnClasses="ui-grid-col-3, ui-grid-col-3, ui-grid-col-3,ui-grid-col-3">
+
+
+					<p:commandButton value="Recortar"
+						update="@form :formGlobal:msgGlobal  pnlFotoRecortada fotoRecortada"
+						icon="fa fa-scissors" action="#{pacienteMB.recortarImagem}" />
+
+					<p:commandButton action="#{pacienteMB.ativarWebCam}"
+						update=":frmWebCam" icon="fa fa-video-camera" value="WebCam"
+						oncomplete="PF('dlgWebCam').show();" />
+
+					<p:commandButton
+						update=":formGlobal:msgGlobal , :frmPaciente:fotoPaciente"
+						action="#{pacienteMB.salvarImagemRecortada}" icon="fa fa-floppy-o"
+						value="Salvar" />
+					<p:commandButton oncomplete="PF('dlgExibirFoto').hide();"
+						value="Fechar" />
+				</p:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<!-- dialog para abri web cam -->
+		<p:dialog header="Tirar foto da WebCam" appendTo="@(body)"
+			modal="true" responsive="true" resizable="false"
+			widgetVar="dlgWebCam">
+			<h:form id="frmWebCam">
+				<p:photoCam rendered="#{pacienteMB.webCam}" id="photocam"
+					update=":frmSelecionarFoto , :formGlobal:msgGlobal" widgetVar="pc"
+					listener="#{pacienteMB.tirarFoto}" />
+
+				<h:panelGrid columns="2">
+					<p:commandButton icon="fa fa-camera" onclick="PF('pc').capture()"
+						value="Capturar" />
+					<p:commandButton icon="fa fa-close"
+						oncomplete="PF('dlgWebCam').hide();" value="Fechar" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+
+</ui:composition>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition template="/template/Template.xhtml">
+
+	<ui:define name="content">
+
+
+
+		<h3 class="tituloPagina">Relatório de Consulta</h3>
+
+		<h:form id="form">
+
+			<ui:include src="/template/MenuRelatorioConsulta.xhtml" />
+
+			<center>
+				<p:dataTable styleClass="tabela" paginator="true"
+					selection="#{consultaMB.consulta}" rowKey="#{c.id}"
+					selectionMode="single" tableStyle="width:auto"
+					resizableColumns="true" widgetVar="table"
+					rowsPerPageTemplate="5,10,15" value="#{consultaMB.consultas}"
+					filteredValue="#{consultaMB.consultasFiltradas}" id="tabela"
+					paginatorPosition="top" rows="5" emptyMessage="Nenhum registro."
+					var="c">
+					<p:column exportable="false" headerText="Foto">
+						<p:graphicImage cache="false" width="100px;" height="100px;"
+							rendered="#{c.paciente.nomeImagem eq null or c.paciente.nomeImagem eq ''}"
+							value="/img/new-user.png" />
+						<p:graphicImage cache="false" width="100px;" height="100px;"
+							rendered="#{c.paciente.nomeImagem ne null}"
+							value="/imagens/#{c.paciente.nomeImagem}" />
+					</p:column>
+					<p:column sortBy="#{c.paciente.nome}" filterBy="#{c.paciente.nome}"
+						headerText="Paciente">
+						<f:facet name="header">
+							<h:outputText value="Paciente" />
+						</f:facet>
+						<p:outputLabel value="#{c.paciente.nome}" />
+					</p:column>
+
+					<p:column sortBy="#{c.tipoConsulta}" filterBy="#{c.tipoConsulta}">
+						<f:facet name="header">
+							<h:outputText value="Consulta" />
+						</f:facet>
+
+						<p:outputLabel value="#{c.tipoConsulta.descricao}" />
+					</p:column>
+
+					<p:column sortBy="#{c.entrada.opcaoPagamento}"
+						filterBy="#{c.entrada.opcaoPagamento}">
+						<f:facet name="header">
+							<h:outputText value="Opção de Pagamento" />
+						</f:facet>
+
+						<p:outputLabel value="#{c.entrada.formaPagamento.nome}" />
+					</p:column>
+					<p:column sortBy="#{c.dataConsulta}" filterBy="#{c.dataConsulta}"
+						headerText="Data">
+						<f:facet name="header">
+							<h:outputText value="Data da Consulta" />
+						</f:facet>
+						<p:outputLabel value="#{c.dataConsulta}">
+							<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+						</p:outputLabel>
+					</p:column>
+
+
+					<p:column sortBy="#{c.entrada.valor}" filterBy="#{c.entrada.valor}"
+						headerText="Valor">
+						<f:facet name="header">
+							<h:outputText value="Valor" />
+						</f:facet>
+						<p:outputLabel value="#{c.entrada.valor}">
+							<f:convertNumber pattern="R$ #,##0.00" />
+						</p:outputLabel>
+						<p:outputLabel rendered="#{c.entrada.valor eq null}"
+							value="R$ 0,00" />
+					</p:column>
+
+					<p:column sortBy="#{c.entrada.desconto}"
+						filterBy="#{c.entrada.desconto}" headerText="Desconto">
+						<f:facet name="header">
+							<h:outputText value="Desconto" />
+						</f:facet>
+						<p:outputLabel rendered="#{c.entrada.desconto ne null}"
+							value="#{c.entrada.desconto}%" />
+						<p:outputLabel rendered="#{c.entrada.desconto eq null}" value="0" />
+					</p:column>
+
+					<p:column sortBy="#{c.entrada.valorComDesconto}"
+						filterBy="#{c.entrada.valorComDesconto}" headerText="Total">
+						<f:facet name="header">
+							<h:outputText value="Total" />
+						</f:facet>
+						<p:outputLabel value="#{c.entrada.valorComDesconto}">
+							<f:convertNumber pattern="R$ #,##0.00" />
+						</p:outputLabel>
+						<p:outputLabel rendered="#{c.entrada.valorComDesconto eq null}"
+							value="R$ 0,00" />
+					</p:column>
+					<f:facet name="header">
+						<p:commandLink style="margin-left:50px;"
+							rendered="#{not empty consultaMB.consultas}" id="pdf"
+							ajax="false">
+							<p:graphicImage value="/img/pdf.png" />
+							<pe:exporter
+								preProcessor="#{consultaMB.gerarRelatorioConsultasPDF}"
+								encoding="iso-8859-1" type="pdf" target="tabela"
+								fileName="rel_consulta" />
+						</p:commandLink>
+						<p:commandLink rendered="#{not empty consultaMB.consultas}"
+							id="xls" ajax="false">
+							<p:graphicImage value="/img/csv.png" />
+							<p:dataExporter type="xls" target="tabela" encoding="iso-8859-1"
+								fileName="rel_consulta" />
+						</p:commandLink>
+					</f:facet>
+				</p:dataTable>
+
+			</center>
+		</h:form>
+	</ui:define>
+
+</ui:composition>
+</html>

@@ -1,0 +1,244 @@
+* /
+body {
+	font-size: 10px !important;
+	background-color: white;
+}
+
+.ajax-status {
+	width: 200px;
+	height: 100px;
+	margin: auto;
+}
+
+.dialog {
+	margin: auto !important;
+	position: absolute !important;
+}
+
+.estiloFonteUsuario {
+	color: white;
+}
+
+.destacarPagamento {
+	background-color: lime !important;
+	color: balck !important;
+}
+
+#corpoDaPagina {
+	padding: 0 auto;
+	margin: 0;
+}
+
+.ui-panelgrid-cell {
+	background-color: #f1f1f1 !important;
+	/*font-family: 'Open Sans', sans-serif;*/
+}
+
+.barra-logo {
+	height: 120px;
+	background-color: #1578c9;
+	width: 100%;
+	padding: 0px;
+	margin: auto;
+	clear: both;
+}
+
+ui-button-text.ui-c .ui-menu .ui-menuitem-text {
+	/*font do menu da barra de tarefas */
+	/*font-family: 'Open Sans', sans-serif;*/
+	font-weight: bold !important;
+	/* 	font-size: 14px !important; */
+	/*font-family: 'Open Sans', sans-serif;*/
+}
+
+.ajax-status {
+	position: fixed;
+	top: 85px;
+	right: 10px;
+	width: 35px;
+	height: 35px
+}
+
+.ui-wizard-step-title {
+	margin-top: 2em ! important;
+	/* 	font-size: 14px !important; */
+}
+
+.estiloBotao {
+	background-color: red !important;
+	color: white !important;
+}
+
+ui-button.ui-state-default span {
+	/*font-family: 'Open Sans', sans-serif;*/
+	
+}
+
+.ui-widget {
+	/*font das tabelas */
+	/*font-size: 14px !important; */
+	/* font-family: 'Open Sans', sans-serif !important; */
+	
+}
+
+.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button
+	{
+	/*font-size: 14px !important; */
+	
+}
+
+.textAreaLembrete {
+	width: 375px !important;
+	height: 150px ! important;
+	padding: 0px !important;
+	margin: 0px !important;
+}
+
+.tituloTemplate {
+	line-height: 30px;
+	color: white;
+}
+
+.botaoExcluirLembrete {
+	margin-left: 250px !important;
+}
+
+.divUsuario {
+	text-align: justify;
+	padding-left: 10px;
+}
+
+.tituloPagina {
+	margin: 10px !important;
+	color: black !important;
+	text-align: left !important;
+	font-family: Lucida Grande, Lucida Sans, Arial, sans-serif !important;
+	font-size: 20px !important;
+	font-weight: bold !important;
+}
+
+.imgLogo {
+	width: 150px;
+	height: 75px;
+	float: left;
+	padding: 5px 5px;
+}
+
+#content {
+	clear: both !important;
+	height: 100% !important;
+}
+
+.label {
+	color: #CCCCCC !important;
+}
+
+.ui-message-dialog .ui-dialog-content {
+	padding: 0.5em !important;
+}
+
+.ui-fieldset, .ui-fieldset .ui-fieldset-legend {
+	padding: 0.6em 0.5em !important;
+}
+
+button.ui-button.ui-state-default span, .ui-button.ui-state-default span
+	{
+	font-size: 14px !important;
+}
+
+.footer {
+	clear: both !important;
+	width: 100%;
+	height: 250px;
+	background-color: #1578c9 !important;
+	margin: 5px auto;
+}
+
+.nomeUsuario {
+	color: white;
+}
+
+#idToolbar {
+	clear: both;
+	margin: 100px;
+}
+
+.tabela {
+	margin-top: 30px;
+}
+
+.panelCadastroPaciente {
+	margin: 2em;
+	width: 85%;
+}
+
+.panelCadastroConsulta {
+	margin: 2em !important;
+}
+
+.panelGridConsulta {
+	margin: 2em !important;
+	padding: 2em !important;
+}
+
+.ui-panelgrid-cell {
+	padding: 20px !important;
+}
+
+.labelPaciente {
+	width: 135px;
+}
+
+.labelConsulta {
+	width: 150px !important;
+}
+
+.spacer {
+	width: 10px !important;
+}
+
+.campoConsultaImg {
+	width: 200px;
+}
+
+.ui-menubar {
+	width: auto !important;
+	height: 35px !important;
+	clear: both !important;
+}
+
+.semBorda tr, .semBorda td {
+	border: none !important;
+}
+
+.ui-panelgrid-cell {
+	background-color: #c4c4c4;
+}
+
+.panelGrid {
+	margin: 2em;
+	margin-right: 1em;
+}
+
+.campoConsulta {
+	width: 200px !important;
+}
+
+.imgFooter {
+	padding: 10px;
+	margin-top: 75px;
+}
+
+.tituloFooter {
+	color: white !important;
+	font-family: "Helvetica" !important;
+}
+
+.labelOrcamento {
+	width: 100px;
+}
+
+.nomeDesenvolvedor {
+	text-decoration: none;
+	color: white;
+}

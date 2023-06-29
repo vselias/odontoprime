@@ -1,0 +1,115 @@
+<pretty-config xmlns="http://ocpsoft.org/schema/rewrite-config-prettyfaces"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://ocpsoft.org/schema/rewrite-config-prettyfaces
+                      http://ocpsoft.org/xml/ns/prettyfaces/rewrite-config-prettyfaces.xsd">
+
+	<url-mapping id="login">
+		<pattern value="/login" />
+		<view-id value="/Login.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="cadastroConsulta">
+		<pattern value="/cadastro/consulta" />
+		<view-id value="/sistema/Consulta.xhtml" />
+
+	</url-mapping>
+	<url-mapping id="cadastroPaciente">
+		<pattern value="/cadastro/paciente" />
+		<view-id value="/sistema/Paciente.xhtml" />
+	</url-mapping>
+	<url-mapping id="cadastroOrcamento">
+		<pattern value="/cadastro/orcamento" />
+		<view-id value="/sistema/Orcamento.xhtml" />
+	</url-mapping>
+	<url-mapping id="cadastroUsuario">
+		<pattern value="/cadastro/usuario" />
+		<view-id value="/sistema/adm/Usuario.xhtml" />
+	</url-mapping>
+	<url-mapping id="pesquisaPaciente">
+		<pattern value="/pesquisa/paciente" />
+		<view-id value="/sistema/PesquisaPaciente.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="galeria">
+		<pattern value="/galeria" />
+		<view-id value="/sistema/Galeria.xhtml" />
+	</url-mapping>
+	<url-mapping id="pesquisaConsulta">
+		<pattern value="/pesquisa/consulta" />
+		<view-id value="/sistema/PesquisaConsulta.xhtml" />
+	</url-mapping>
+	<url-mapping id="pesquisaFluxoCaixa">
+		<pattern value="/pesquisa/fechamento" />
+		<view-id value="/sistema/adm/PesquisaFluxoCaixa.xhtml" />
+	</url-mapping>
+	<url-mapping id="inicio">
+		<pattern value="/inicio" />
+		<view-id value="/sistema/Inicio.xhtml" />
+	</url-mapping>
+	<url-mapping id="vendasPorData">
+		<pattern value="/vendapordata" />
+		<view-id value="/sistema/adm/VendasPorData.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="vendaPorCliente ">
+		<pattern value="/vendaporcliente" />
+		<view-id value="/sistema/adm/VendasPorPaciente.xhtml" />
+	</url-mapping>
+	<url-mapping id="vendasAtual ">
+		<pattern value="/vendahoje" />
+		<view-id value="/sistema/adm/VendasPorDia.xhtml" />
+	</url-mapping>
+	<url-mapping id="grafico">
+		<pattern value="/grafico/graficodevenda" />
+		<view-id value="/sistema/adm/GraficoDeVenda.xhtml" />
+	</url-mapping>
+	<url-mapping id="pesquisaSaida">
+		<pattern value="/pesquisa/saida" />
+		<view-id value="/sistema/adm/PesquisaSaida.xhtml" />
+	</url-mapping>
+	<url-mapping id="pesquisaUsuario">
+		<pattern value="/pesquisa/usuario" />
+		<view-id value="/sistema/adm/PesquisaUsuario.xhtml" />
+	</url-mapping>
+	<url-mapping id="entrada">
+		<pattern value="/movimentacao/entrada" />
+		<view-id value="/sistema/adm/Entrada.xhtml" />
+	</url-mapping>
+	<url-mapping id="pagamento">
+		<pattern value="/movimentacao/pagamento" />
+		<view-id value="/sistema/adm/PagamentoParcela.xhtml" />
+	</url-mapping>
+	<url-mapping id="relatorioConsulta">
+		<pattern value="/relatorio/consulta" />
+		<view-id value="/sistema/RelatorioConsulta.xhtml" />
+	</url-mapping>
+	<url-mapping id="relatorioPaciente">
+		<pattern value="/relatorio/paciente" />
+		<view-id value="/sistema/RelatorioPaciente.xhtml" />
+	</url-mapping>
+	<url-mapping id="pesquisaOrcamento">
+		<pattern value="/pesquisa/orcamento" />
+		<view-id value="/sistema/PesquisaOrcamento.xhtml" />
+	</url-mapping>
+	<url-mapping id="pesquisaOrcamento">
+		<pattern value="/pesquisa/orcamento" />
+		<view-id value="/sistema/PesquisaOrcamento.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="estadoConsulta">
+		<pattern value="/consulta/estado" />
+		<view-id value="/sistema/DefinirEstado.xhtml" />
+	</url-mapping>
+	<url-mapping id="cadastroSaida">
+		<pattern value="/cadastro/saida" />
+		<view-id value="/sistema/adm/Saida.xhtml" />
+	</url-mapping>
+	<url-mapping id="pesquisaSaida">
+		<pattern value="/pesquisa/saida" />
+		<view-id value="/sistema/adm/PesquisaSaida.xhtml" />
+	</url-mapping>
+	<url-mapping id="cadastroFechamento">
+		<pattern value="/cadastro/fechamento" />
+		<view-id value="/sistema/adm/FechamentoCaixa.xhtml" />
+	</url-mapping>
+</pretty-config>

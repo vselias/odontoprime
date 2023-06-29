@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:form id="frmPagParcela">
+
+	<p:messages id="msgPagParcela" showDetail="false" closable="true"
+		escape="true" />
+
+	<h:panelGrid cellpadding="10" columns="2">
+
+		<p:outputLabel value="Número parcela:" />
+		<p:inputText readonly="true" value="#{entradaMB.parcela.numParcela}ª" />
+
+		<p:outputLabel value="Data do vencimento:" />
+		<p:inputText readonly="true"
+			value="#{entradaMB.parcela.dataVencimento}">
+			<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+		</p:inputText>
+
+		<p:outputLabel value="Valor:" />
+		<p:inputText readonly="true" value="#{entradaMB.parcela.valor}">
+			<f:convertNumber pattern="R$#,##0.00" />
+		</p:inputText>
+
+		<p:outputLabel for="data_pagamento" value="Data do Pagamento:" />
+		<p:calendar id="data_pagamento" navigator="true" mask="99/99/9999"
+			pattern="dd/MM/yyyy"
+			requiredMessage="Data pagamento deve ser informada." required="true"
+			value="#{entradaMB.parcela.dataPagamento}" />
+
+		<p:commandButton oncomplete="PF('dlgConfPagamento').show()"
+			icon="fa fa-check" value="Concluir Pagamento" />
+
+		<p:commandButton styleClass="botaoCancelar" immediate="true" update="@form"
+			oncomplete="PF('dlgPagParcela').hide();" value="Fechar"
+			icon="fa fa-close" />
+	</h:panelGrid>
+
+
+</h:form>
+</html>

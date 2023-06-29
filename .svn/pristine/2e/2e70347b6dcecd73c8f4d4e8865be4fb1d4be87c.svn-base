@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+<ui:composition template="/template/Template.xhtml">
+
+
+	<ui:define name="content">
+
+
+
+		<div class="ui-grid-responsive">
+			<div class="ui-grid-row">
+				<div class="ui-grid-col-8">
+					<br />
+				</div>
+
+				<div class="ui-grid-col-4">
+					<b> <p:outputLabel
+							value="Bem-Vindo ao Odonto Prime,
+						#{usuarioMB.usuario.login}." />
+					</b>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="ui-grid-responsive">
+			<div class="ui-grid-row">
+				<div class="ui-grid-col-8">
+					<p>
+						<p:outputLabel style="text-align:justify;"
+							value="OdontoPrime tem como objetivo facilitar o gerenciamento da
+						sua clínica odontológica de forma mais prática e eficiente. Com OdontoPrime
+						é possível você acompanhar em tempo real todas consultas marcadas,
+						alterar o estado das consultas, acompanhar o financeiro, gerar
+						relatórios dos pacientes, das consultas e das vendas. Além disso,
+						é possivel você armazenar as fotos das consultas na galeria do
+						paciente. Assim, facilitando o gerenciamento das informações de
+						sua clínica.
+					" />
+
+					</p>
+
+				</div>
+				<div class="ui-grid-col-4"></div>
+			</div>
+		</div>
+
+	</ui:define>
+
+</ui:composition>
+</html>

@@ -1,0 +1,24 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:toolbar>
+		<p:toolbarGroup>
+			<p:commandButton update="frmConsulta"
+				action="#{consultaMB.limparCampos}" process="@this" value="Limpar"
+				icon="fa fa-file-o">
+				<p:resetInput target="frmConsulta" />
+			</p:commandButton>
+			<p:separator />
+			<p:separator />
+			<p:commandButton icon="fa fa-floppy-o" value="Salvar"
+				actionListener="#{consultaMB.efetuarConsulta}" update="@form, msg" />
+		</p:toolbarGroup>
+		<p:toolbarGroup align="right">
+			<p:button value="Pesquisar" icon="fa fa-search"
+				outcome="PesquisaConsulta.xhtml" />
+		</p:toolbarGroup>
+	</p:toolbar>
+</ui:composition>

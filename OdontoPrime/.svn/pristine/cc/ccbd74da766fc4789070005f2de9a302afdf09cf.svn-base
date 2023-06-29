@@ -1,0 +1,169 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+
+<ui:composition template="/template/Template.xhtml">
+	<f:metadata>
+		<f:viewParam name="codigo" value="#{orcamentoMB.orcamento}"
+			converter="OrcamentoConverter" />
+	</f:metadata>
+
+	<ui:define name="content">
+
+
+
+		<h:form id="frmOrcamento" styleClass="frmDadosPaciente">
+
+			<h3 style="text-align: right" class="tituloPagina">Novo
+				Orçamento</h3>
+
+
+			<ui:include src="/template/MenuOrcamento.xhtml" />
+
+			<p:messages id="msg" closable="true" />
+
+			<p:spacer height="10px" />
+
+			<div class="ui-grid-responsive">
+				<p:panel style="text-align:center;"
+					header="Informações do Orçamento">
+					<center>
+						<div class="ui-grid-row">
+							<div class="ui-grid-col-6">
+								<h:panelGrid cellpadding="5" columns="2">
+									<p:outputLabel for="paciente" value="Selecione o paciente" />
+									<br />
+
+									<p:inputText required="true"
+										readonly="#{facesContext.currentPhaseId.ordinal eq 6}"
+										id="paciente" value="#{orcamentoMB.orcamento.paciente.nome}"
+										requiredMessage="Usuário deve ser informado." />
+
+									<p:commandButton immediate="true" style="width:35px;"
+										update="@form" icon="ui-icon-search"
+										oncomplete="PF('dlgConsultaPaciente').show()" />
+
+
+
+									<p:outputLabel value="Consulta" />
+									<br />
+									<p:selectOneMenu value="#{orcamentoMB.orcamento.tipoConsulta}">
+										<f:selectItem itemLabel="Canal" itemValue="Canal" />
+										<f:selectItem itemLabel="Cirurgia" itemValue="Cirurgia" />
+										<f:selectItem itemLabel="Clareamento" itemValue="Clareamento" />
+										<f:selectItem itemLabel="Extração" itemValue="Extração" />
+										<f:selectItem itemLabel="Limpeza" itemValue="Limpeza" />
+										<f:selectItem itemLabel="Montagem de Aparelho"
+											itemValue="Montagem de Aparelho" />
+										<f:selectItem itemLabel="Manutenção" itemValue="Manutenção" />
+									</p:selectOneMenu>
+								</h:panelGrid>
+							</div>
+
+
+
+							<div class="ui-grid-col-6">
+								<h:panelGrid cellpadding="5" columns="2">
+									<p:outputLabel for="valor" value="Valor" />
+									<br />
+									<p:inputText id="valor" maxlength="10" required="true"
+										validatorMessage="Valor inválido."
+										requiredMessage="Valor deve ser informado."
+										value="#{orcamentoMB.orcamento.valor}">
+										<f:convertNumber maxFractionDigits="2" minFractionDigits="2" />
+									</p:inputText>
+								</h:panelGrid>
+							</div>
+
+						</div>
+					</center>
+				</p:panel>
+			</div>
+
+		</h:form>
+
+
+		<p:dialog widgetVar="dlgConsultaPaciente" modal="true"
+			appendTo="@(body)" closable="true" closeOnEscape="true"
+			showEffect="fold" hideEffect="fold"
+			header="Selecione um paciente para o orçamento" resizable="false">
+			<center>
+				<h:form id="frmTbl">
+					<p:dataTable tableStyle="width:auto" resizableColumns="true"
+						styleClass="tabela" value="#{orcamentoMB.pacientes}" var="c"
+						paginator="true" rowsPerPageTemplate="5,10,15" rows="5"
+						emptyMessage="Nenhum registro." rowKey="#{c.id}" widgetVar="tbl"
+						selection="#{orcamentoMB.orcamento.paciente}"
+						selectionMode="single">
+
+						<p:column headerText="Foto">
+							<p:graphicImage cache="false" width="100" height="100"
+								rendered="#{c.nomeImagem eq null or c.nomeImagem eq ''}"
+								value="/img/new-user.png">
+							</p:graphicImage>
+							<p:graphicImage cache="false" width="100" height="100"
+								rendered="#{c.nomeImagem ne null}"
+								value="/imagens/#{c.nomeImagem}">
+							</p:graphicImage>
+						</p:column>
+
+						<p:column sortBy="#{c.nome}" filterBy="#{c.nome}"
+							headerText="Nome">
+							<p:outputLabel value="#{c.nome}" />
+						</p:column>
+
+						<p:column sortBy="#{c.cpf}" filterBy="#{c.cpf}" headerText="CPF">
+							<p:outputLabel value="#{c.cpf}" />
+						</p:column>
+
+						<p:column sortBy="#{c.dataNascimento}"
+							filterBy="#{c.dataNascimento}" headerText="Data Nascimento">
+							<p:outputLabel value="#{c.dataNascimento}">
+								<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy" />
+							</p:outputLabel>
+							<p:outputLabel value="Não informado."
+								rendered="#{c.dataNascimento eq null}" />
+						</p:column>
+
+						<p:column sortBy="#{c.email}" filterBy="#{c.email}"
+							headerText="e-Mail">
+							<p:outputLabel value="#{c.email}" />
+							<p:outputLabel value="Não informado."
+								rendered="#{c.email eq null or c.email eq ''}" />
+						</p:column>
+
+						<p:column sortBy="#{c.sexo}" filterBy="#{c.sexo}"
+							headerText="Sexo">
+							<p:outputLabel value="#{c.sexo}" />
+						</p:column>
+						<p:column headerText="Selecionar Paciente"
+							style="text-align:center;">
+
+
+							<p:commandButton process="@this, :frmOrcamento:paciente"
+								oncomplete="PF('dlgConsultaPaciente').hide()"
+								update=":frmOrcamento, :frmOrcamento:paciente"
+								icon="ui-icon-check">
+								<f:setPropertyActionListener value="#{c}"
+									target="#{orcamentoMB.orcamento.paciente}" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+				</h:form>
+			</center>
+		</p:dialog>
+
+
+
+
+	</ui:define>
+
+</ui:composition>
+</html>
